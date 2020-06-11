@@ -20,6 +20,7 @@ export function Arg(name: string, type?: TypeFunction) {
       index,
       type: typeFn,
       params: {},
+      meta: {},
     };
 
     const args = Args.create()

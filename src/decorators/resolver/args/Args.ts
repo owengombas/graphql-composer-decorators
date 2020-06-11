@@ -10,6 +10,7 @@ export function Args() {
       index,
       type: () => Reflect.getMetadata("design:paramtypes", target, key)[index],
       params: {},
+      meta: {},
     };
 
     const args = ComposerArgs.create().setMeta(meta);
