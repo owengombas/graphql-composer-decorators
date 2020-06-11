@@ -1,8 +1,12 @@
-import { FieldType as ComposerFieldType, ClassType } from "graphql-composer";
-import { NullableType, NotNullableType } from "..";
+import {
+  FieldType as ComposerFieldType,
+  ClassType,
+  NullableType,
+  RequiredType,
+} from "graphql-composer";
 
 export type FieldType =
   | ClassType
   | NullableType
-  | NotNullableType
+  | RequiredType
   | ComposerFieldType;

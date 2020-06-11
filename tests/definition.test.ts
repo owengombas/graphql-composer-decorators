@@ -7,13 +7,13 @@ import {
   Query,
   Arg,
   Args,
-  Nullable,
   InterfaceType,
   Description,
   Meta,
   Middlewares,
+  InputField,
 } from "../src/";
-import { Request, Selection, Middleware } from "graphql-composer";
+import { Request, Selection, Middleware, Nullable } from "graphql-composer";
 import { ApolloServer, gql } from "apollo-server";
 import ApolloClient from "apollo-boost";
 import fetch from "node-fetch";
@@ -26,7 +26,8 @@ import fetch from "node-fetch";
   console.log("A");
 })
 class A {
-  @Field(() => Nullable(String))
+  @Field()
+  @InputField()
   @Description("hello")
   @Middlewares(function b() {
     console.log("B");
@@ -46,8 +47,8 @@ class R {
   @Query()
   @Meta({ test: "hello" })
   query(
-    @Arg("test")
-    test: string,
+    @Arg("testArg")
+    testArg: string,
     @Args()
     test3: A,
     @Arg("test2")
@@ -62,7 +63,8 @@ class R {
 }
 
 const request = Request.create<any>("query", "query", {
-  test: "yo",
+  testArg: "yo",
+  test: "string",
   test2: "b",
 }).select(Selection.create("test"));
 
@@ -72,23 +74,20 @@ const client = new ApolloClient({
 });
 
 beforeAll(async () => {
-  const schema = Schema.create()
-    .setConfig({ notNullableByDefault: true })
-    .load();
-  const built = schema.build();
-
-  const server = new ApolloServer({
-    schema: built,
-  });
-  await server.listen(4002);
+  // const schema = Schema.create().setConfig({ requiredByDefault: true }).load();
+  // const built = schema.build();
+  // const server = new ApolloServer({
+  //   schema: built,
+  // });
+  // await server.listen(4002);
 });
 
 describe("Queries", () => {
   it("Should create a resolver some arguments", async () => {
-    const res = await client.query({
-      query: gql`
-        ${request.source}
-      `,
-    });
+    // const res = await client.query({
+    //   query: gql`
+    //     ${request.source}
+    //   `,
+    // });
   });
 });

@@ -1,11 +1,12 @@
 import {
   InputFieldType as ComposerInputFieldType,
   ClassType,
+  NullableType,
+  RequiredType,
 } from "graphql-composer";
-import { NotNullableType, NullableType } from "..";
 
 export declare type InputFieldType =
   | ClassType
   | NullableType
-  | NotNullableType
+  | RequiredType
   | ComposerInputFieldType;

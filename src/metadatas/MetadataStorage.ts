@@ -7,13 +7,14 @@ import {
   ClassType,
   GQLType,
   GQLField,
-  GQLObjectType,
   TypeParser,
   ResolveFunction,
   Args,
   FieldType,
   Nullable,
-  NotNullable,
+  RequiredType,
+  NullableType,
+  Required,
 } from "graphql-composer";
 import {
   Kind,
@@ -23,9 +24,6 @@ import {
   ObjectTypeParams,
   TypeParams,
   BuildingFieldParams,
-  Nullabler,
-  NullableType,
-  NotNullableType,
   Modifier,
 } from "..";
 import { FieldModifier, TypeModifier } from "../types";
@@ -155,16 +153,24 @@ export class MetadataStorage {
       ...this._subscriptions,
     ];
 
-    this.createClassTypeMap();
+    // Create type map
+    this._allTypes.map((t) => {
+      const el = this._classTypeMap.get(t.meta.classType);
+      const value = el || {};
+
+      value[t.meta.kind] = t;
+
+      this._classTypeMap.set(t.meta.classType, value);
+    });
 
     this.populateFields(this._fields, "object");
     this.populateFields(this._interfaceFields, "interface");
     this.populateFields(this._inputFields, "input");
 
-    this.applyIhneritanceToTypes();
     this.resolveFieldsType();
-    this.populateArgs();
+    this.applyIhneritanceToTypes();
     this.applyImplementations();
+    this.populateArgs();
 
     this.applyTypesModifiers();
     this.applyFieldModifiers();
@@ -269,16 +275,20 @@ export class MetadataStorage {
   ) {
     fields.map((f) => {
       const resolver: ResolveFunction = (args, gql, next, paramsToNext) => {
-        const finalArgs = Object.keys(args).reduce((prev, key) => {
-          const found = f.args.find((a) => a.name === key);
-          if (!found) {
-            throw new Error(
-              `Argument: ${key} not found in the while querying field: ${f.meta.classType.name} ${f.meta.key}`,
-            );
-          }
-          prev[found.meta.index] = args[key];
-          return prev;
-        }, []);
+        let finalArgs = [args];
+
+        if (f.args.length > 1) {
+          finalArgs = Object.keys(args).reduce((prev, key) => {
+            const found = f.args.find((a) => a.name === key);
+            if (!found) {
+              throw new Error(
+                `Argument: ${key} not found in the while querying field: ${f.meta.classType.name} ${f.meta.key}`,
+              );
+            }
+            prev[found.meta.index] = args[key];
+            return prev;
+          }, []);
+        }
 
         instance[f.meta.key].bind(instance)(
           ...finalArgs,
@@ -297,22 +307,18 @@ export class MetadataStorage {
     });
   }
 
-  private createClassTypeMap() {
-    this._allTypes.map((t) => {
-      const el = this._classTypeMap.get(t.meta.classType);
-      const value = el || {};
-
-      value[t.meta.kind] = t;
-
-      this._classTypeMap.set(t.meta.classType, value);
-    });
-  }
-
   private resolveFieldsType() {
     this._allTypes.map((typeDef) => {
       typeDef.fields.map((f) => {
         const t = this.resolveType(f.meta as MetaType, typeDef.meta.kind);
         f.setType(t);
+
+        if (typeDef.meta.params.partial) {
+          f.nullable();
+        }
+        if (typeDef.meta.params.required) {
+          f.required();
+        }
       });
     });
   }
@@ -323,10 +329,13 @@ export class MetadataStorage {
     const t = TypeParser.parse(typeRef as any);
 
     if (!t) {
-      let nullable: typeof NullableType | typeof NotNullableType = undefined;
-      if (typeRef instanceof Nullabler) {
-        nullable =
-          typeRef instanceof NullableType ? NullableType : NotNullableType;
+      let nullable: typeof NullableType | typeof RequiredType = undefined;
+      if (typeRef instanceof NullableType) {
+        nullable = NullableType;
+        typeRef = typeRef.type;
+      }
+      if (typeRef instanceof RequiredType) {
+        nullable = RequiredType;
         typeRef = typeRef.type;
       }
 
@@ -359,8 +368,8 @@ export class MetadataStorage {
 
         if (relationType) {
           switch (nullable) {
-            case NotNullableType:
-              relationType = NotNullable(relationType);
+            case RequiredType:
+              relationType = Required(relationType);
               break;
             case NullableType:
               relationType = Nullable(relationType);
@@ -390,7 +399,9 @@ export class MetadataStorage {
 
   private populateFields(fields: GQLField[], key: Kind) {
     fields.map((f) => {
-      const t = this._classTypeMap.get(f.meta.classType)?.[key];
+      const t: GQLType<any, any, MetaType<TypeParams>> = this._classTypeMap.get(
+        f.meta.classType,
+      )?.[key];
       if (t) {
         t.addFields(f);
       }
@@ -415,7 +426,7 @@ export class MetadataStorage {
     const applyFromClass = (superClass: Function) => {
       const allTypes = this._classTypeMap.get(superClass);
       if (allTypes) {
-        const superType = this.getSameKind(t, allTypes);
+        const superType = allTypes[t.meta.kind];
 
         if (superType) {
           apply(t, superType);
@@ -440,19 +451,5 @@ export class MetadataStorage {
         }
       }
     }
-  }
-
-  private getTypesLinkedToField(field: GQLField<any, any, MetaType>) {
-    return this._classTypeMap.get(field.meta.classType);
-  }
-
-  private getSameKind(
-    t: GQLType<any, any, MetaType>,
-    types: TypeMap,
-  ): GQLType<any, any, MetaType> {
-    if (types) {
-      return types[t.meta.kind];
-    }
-    return undefined;
   }
 }
