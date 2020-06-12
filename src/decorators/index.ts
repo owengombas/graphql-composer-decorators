@@ -1,4 +1,5 @@
 export * from "./fields/Field";
+export * from "./fields/ObjectField";
 export * from "./fields/InputField";
 export * from "./fields/InterfaceField";
 

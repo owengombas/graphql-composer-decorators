@@ -1,17 +1,22 @@
 import { InterfaceType as T, ClassType } from "graphql-composer";
-import { MetadataStorage, TypeParams, MetaType } from "../..";
+import {
+  MetadataStorage,
+  TypeParams,
+  MetaType,
+  InterfaceTypeParams,
+} from "../..";
 
 export function InterfaceType();
 export function InterfaceType(name: string);
-export function InterfaceType(params: TypeParams);
-export function InterfaceType(name: string, params: TypeParams);
+export function InterfaceType(params: InterfaceTypeParams);
+export function InterfaceType(name: string, params: InterfaceTypeParams);
 export function InterfaceType(
   nameOrParams?: string | TypeParams,
   params?: TypeParams,
 ) {
   return (target: Function) => {
     let finalName = target.name;
-    let finalParams = {};
+    let finalParams: InterfaceTypeParams = {};
 
     if (typeof nameOrParams === "string") {
       finalName = nameOrParams;
@@ -33,7 +38,8 @@ export function InterfaceType(
 
     const item = T.create<any>(target as ClassType)
       .setName(finalName)
-      .setMeta(meta);
+      .setMeta(meta)
+      .setTypeResolver(finalParams.typeResolver);
 
     MetadataStorage.instance.addInterfaceType(item);
   };

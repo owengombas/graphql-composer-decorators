@@ -15,6 +15,8 @@ import {
   RequiredType,
   NullableType,
   Required,
+  UnionType,
+  GQLAnyType,
 } from "graphql-composer";
 import {
   Kind,
@@ -71,6 +73,7 @@ export class MetadataStorage {
 
   private _allFields: GQLField<any, any, MetaType<BuildingFieldParams>>[] = [];
   private _fields: Field<any, MetaType<BuildingFieldParams>>[] = [];
+  private _objectFields: Field<any, MetaType<BuildingFieldParams>>[] = [];
   private _inputFields: InputField<any, MetaType<BuildingFieldParams>>[] = [];
   private _interfaceFields: Field<any, MetaType<BuildingFieldParams>>[] = [];
 
@@ -79,7 +82,7 @@ export class MetadataStorage {
 
   private _args: Args<any, MetaType<FieldParams>>[] = [];
 
-  private _built: GQLType<any, any, MetaType>[] = [];
+  private _built: GQLAnyType<any, MetaType>[] = [];
 
   get built() {
     return this._built;
@@ -99,6 +102,10 @@ export class MetadataStorage {
 
   addField(item: Field<any, any>) {
     this._fields.push(item);
+  }
+
+  addObjectField(item: Field<any, any>) {
+    this._objectFields.push(item);
   }
 
   addInputField(item: InputField<any, any>) {
@@ -145,9 +152,10 @@ export class MetadataStorage {
     ];
 
     this._allFields = [
-      ...this._inputFields,
       ...this._fields,
+      ...this._objectFields,
       ...this._interfaceFields,
+      ...this._inputFields,
       ...this._queries,
       ...this._mutations,
       ...this._subscriptions,
@@ -163,9 +171,18 @@ export class MetadataStorage {
       this._classTypeMap.set(t.meta.classType, value);
     });
 
-    this.populateFields(this._fields, "object");
+    this.populateFields(this._objectFields, "object");
     this.populateFields(this._interfaceFields, "interface");
     this.populateFields(this._inputFields, "input");
+
+    this._fields.map((f) => {
+      this.addFieldWithoutDuplication(this._objectFields, f);
+      this.addFieldWithoutDuplication(this._interfaceFields, f);
+      this.addFieldWithoutDuplication(
+        this._inputFields,
+        f.convert(InputField) as any,
+      );
+    });
 
     this.resolveFieldsType();
     this.applyIhneritanceToTypes();
@@ -179,14 +196,40 @@ export class MetadataStorage {
     this.createResolver(this._mutations, this._mutationType);
     this.createResolver(this._subscriptions, this._subscriptionType);
 
-    this._built = [
-      this._queryType,
-      this._mutationType,
-      this._subscriptionType,
-      ...this._allTypes,
-    ].filter((t) => t.fields.length > 0);
+    this._built = [this._queryType, ...this._allTypes, ...this.built].filter(
+      (t) => {
+        if (t.meta) {
+          return !t.meta.params.hidden;
+        }
+        return true;
+      },
+    );
+
+    if (!this.isEmptyType(this._mutationType)) {
+      this._built.push(this._mutationType);
+    }
+
+    if (!this.isEmptyType(this._subscriptionType)) {
+      this._built.push(this._subscriptionType);
+    }
 
     return this._built;
+  }
+
+  private addFieldWithoutDuplication(
+    fields: GQLField<any, any, MetaType<FieldParams>>[],
+    field: GQLField<any, any, MetaType<FieldParams>>,
+  ) {
+    const exists = fields.find((f) => {
+      return (f.meta as MetaType).key === field.meta.key;
+    });
+    if (!exists) {
+      fields.push(field);
+    }
+  }
+
+  private isEmptyType(t: GQLType) {
+    return t.fields.length <= 0;
   }
 
   private applyFieldModifiers() {
@@ -274,7 +317,7 @@ export class MetadataStorage {
     type: ObjectType<any, MetaType>,
   ) {
     fields.map((f) => {
-      const resolver: ResolveFunction = (args, gql, next, paramsToNext) => {
+      const resolver: ResolveFunction = (args, gql, next) => {
         let finalArgs = [args];
 
         if (f.args.length > 1) {
@@ -290,12 +333,7 @@ export class MetadataStorage {
           }, []);
         }
 
-        instance[f.meta.key].bind(instance)(
-          ...finalArgs,
-          gql,
-          next,
-          paramsToNext,
-        );
+        instance[f.meta.key].bind(instance)(...finalArgs, gql, next);
       };
 
       const instance = this._store.getInstance(f.meta.classType);
@@ -326,6 +364,34 @@ export class MetadataStorage {
   private resolveType(meta: MetaType<FieldParams>, typeKind: Kind) {
     let res: FieldType;
     let typeRef: any = meta.type();
+
+    if (typeRef instanceof UnionType) {
+      // if the union type isn't already compiled,
+      // convert the union classes into the corresponding object types
+      if (!this._built.includes(typeRef)) {
+        const newTypes: ObjectType[] = [];
+        typeRef.types.map((t) => {
+          if (t instanceof ObjectType) {
+            newTypes.push(t);
+          } else {
+            const found = this._classTypeMap.get(t);
+            if (found?.object) {
+              newTypes.push(found?.object);
+            } else {
+              throw new Error(
+                `Union: ${typeRef.name} Cannot find object type for class ${t.name}, try to decorate the class with @ObjectType`,
+              );
+            }
+          }
+        });
+
+        typeRef.setTypes(...newTypes);
+        this._built.push(typeRef);
+      }
+
+      return typeRef;
+    }
+
     const t = TypeParser.parse(typeRef as any);
 
     if (!t) {
@@ -357,6 +423,9 @@ export class MetadataStorage {
 
         let relationType = relationTypes[relationTypeStr];
 
+        // Add a fallback to type
+        // "interface" =x=> "interface" ... "interface" => "object"
+        // "object" =x=> "object" ... "object" => "interface"
         if (!relationType) {
           if (relationTypeStr === "interface") {
             relationType = relationTypes.object;
