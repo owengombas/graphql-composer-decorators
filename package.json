@@ -1,6 +1,6 @@
 {
   "name": "graphql-composer-decorators",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "build/Main.js",
   "author": "Owen Calvin",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "glob": "^7.1.6",
-    "graphql-composer": "^1.0.34",
+    "graphql-composer": "^1.0.38",
     "reflect-metadata": "^0.1.13"
   },
   "husky": {

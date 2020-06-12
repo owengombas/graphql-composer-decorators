@@ -13,13 +13,22 @@ export function Middlewares(...middlewares: ResolveFunction[]) {
     descriptor?: TypedPropertyDescriptor<any>,
   ) => {
     const finalMiddlewares = middlewares.map((m) => Middleware.create(m));
+    const fieldModifier = (f) => {
+      if (f instanceof Field) {
+        f.addMiddlewares(...finalMiddlewares);
+      }
+    };
+
     if (typeof prototype === "function") {
       MetadataStorage.instance.addTypeModifier({
         classType: prototype,
         key: prototype.name,
+        fieldModifier: fieldModifier,
         modifier: (t) => {
           if (t instanceof GQLObjectType) {
-            t.transformFields((f) => f.addMiddlewares(...finalMiddlewares));
+            t.transformFields((f) => {
+              f.addMiddlewares(...finalMiddlewares);
+            });
           }
         },
       });
@@ -27,11 +36,7 @@ export function Middlewares(...middlewares: ResolveFunction[]) {
       MetadataStorage.instance.addFieldModifier({
         classType: prototype.constructor,
         key: propertyKey,
-        modifier: (f) => {
-          if (f instanceof Field) {
-            f.addMiddlewares(...finalMiddlewares);
-          }
-        },
+        modifier: fieldModifier,
       });
     }
   };

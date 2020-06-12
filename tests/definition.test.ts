@@ -20,6 +20,7 @@ import {
   Middleware,
   Nullable,
   UnionType,
+  Context,
 } from "graphql-composer";
 import { ApolloServer, gql } from "apollo-server";
 import ApolloClient from "apollo-boost";
@@ -28,31 +29,51 @@ import fetch from "node-fetch";
 @ObjectType()
 @InputType("AInput")
 @Description("Test")
-@Middlewares(function a() {
+@Middlewares(async function a(a, b, c) {
   console.log("A");
+  await c();
 })
 class A {
-  @Field("test")
-  @Description("hello")
-  @Middlewares(function b() {
+  @Field()
+  @Middlewares(async function b(a, b, c) {
     console.log("B");
+    await c();
   })
-  test: string;
+  test(
+    @Arg("testArg")
+    testArg: string,
+    @Args()
+    test3: A,
+    @Arg("test2")
+    test2: string,
+    ctx: Context,
+    b,
+  ): string {
+    return "hello";
+  }
 }
 
 @ObjectType()
 @InputType("BInput")
 class B extends A {
-  @ObjectField()
+  @Field()
   test2: string;
 }
 
-const union = UnionType.create("Union", A, B);
-
 @Resolver()
+@Middlewares(async function c(a, b, c) {
+  console.log("C");
+  await c();
+})
 class R {
-  @Query(() => union)
+  binded = "binded";
+
+  @Query(() => A)
   @Meta({ test: "hello" })
+  @Middlewares(async function d(a, b, c) {
+    console.log("D");
+    await c();
+  })
   query(
     @Arg("testArg")
     testArg: string,
@@ -60,36 +81,12 @@ class R {
     test3: A,
     @Arg("test2")
     test2: string,
-    a,
+    ctx: Context,
     b,
-    c,
-    d,
   ): A {
-    return undefined;
-  }
-  @Query(() => union)
-  @Meta({ test: "hello" })
-  query2(
-    @Arg("testArg")
-    testArg: string,
-    @Args()
-    test3: A,
-    @Arg("test2")
-    test2: string,
-    a,
-    b,
-    c,
-    d,
-  ): A {
-    return undefined;
+    return new A();
   }
 }
-
-const request = Request.create<any>("query", "query", {
-  testArg: "yo",
-  test: "string",
-  test2: "b",
-}).select(Selection.create("test"));
 
 const client = new ApolloClient({
   uri: "http://localhost:4002/graphql",
@@ -109,8 +106,13 @@ describe("Queries", () => {
   it("Should create a resolver some arguments", async () => {
     // const res = await client.query({
     //   query: gql`
-    //     ${request.source}
+    //     query {
+    //       query(testArg: "test", test: "test", test2: "test") {
+    //         test(testArg: "test", test: "test", test2: "test")
+    //       }
+    //     }
     //   `,
     // });
+    // console.log(res);
   });
 });

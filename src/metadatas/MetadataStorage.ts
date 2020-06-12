@@ -152,7 +152,6 @@ export class MetadataStorage {
     ];
 
     this._allFields = [
-      ...this._fields,
       ...this._objectFields,
       ...this._interfaceFields,
       ...this._inputFields,
@@ -171,10 +170,6 @@ export class MetadataStorage {
       this._classTypeMap.set(t.meta.classType, value);
     });
 
-    this.populateFields(this._objectFields, "object");
-    this.populateFields(this._interfaceFields, "interface");
-    this.populateFields(this._inputFields, "input");
-
     this._fields.map((f) => {
       this.addFieldWithoutDuplication(this._objectFields, f);
       this.addFieldWithoutDuplication(this._interfaceFields, f);
@@ -183,6 +178,10 @@ export class MetadataStorage {
         f.convert(InputField) as any,
       );
     });
+
+    this.populateFields(this._objectFields, "object");
+    this.populateFields(this._interfaceFields, "interface");
+    this.populateFields(this._inputFields, "input");
 
     this.resolveFieldsType();
     this.applyIhneritanceToTypes();
@@ -195,6 +194,17 @@ export class MetadataStorage {
     this.createResolver(this._queries, this._queryType);
     this.createResolver(this._mutations, this._mutationType);
     this.createResolver(this._subscriptions, this._subscriptionType);
+
+    this._objectTypes.map((obj) => {
+      const resolvableFields = obj.fields.filter((f) => f.resolver) as Field<
+        any,
+        MetaType<FieldParams>
+      >[];
+      if (resolvableFields.length > 0) {
+        this.addResolver(obj.classType);
+        this.createResolver(resolvableFields, obj);
+      }
+    });
 
     this._built = [this._queryType, ...this._allTypes, ...this.built].filter(
       (t) => {
@@ -245,11 +255,20 @@ export class MetadataStorage {
 
   private applyTypesModifiers() {
     this._typeModifiers.map((tm) => {
-      const t = this._allTypes.find((t) => {
-        return tm.classType === t.meta.classType && tm.key === t.meta.key;
-      });
-      if (t) {
-        tm.modifier(t);
+      const instance = this._store.getInstance(tm.classType);
+      if (instance) {
+        this._allFields.map((f) => {
+          if (tm.classType === f.meta.classType) {
+            tm.fieldModifier(f);
+          }
+        });
+      } else {
+        const t = this._allTypes.find((t) => {
+          return tm.classType === t.meta.classType && tm.key === t.meta.key;
+        });
+        if (t) {
+          tm.modifier(t);
+        }
       }
     });
   }
@@ -317,7 +336,7 @@ export class MetadataStorage {
     type: ObjectType<any, MetaType>,
   ) {
     fields.map((f) => {
-      const resolver: ResolveFunction = (args, gql, next) => {
+      const resolver: ResolveFunction = async (args, gql, next) => {
         let finalArgs = [args];
 
         if (f.args.length > 1) {
@@ -333,7 +352,11 @@ export class MetadataStorage {
           }, []);
         }
 
-        instance[f.meta.key].bind(instance)(...finalArgs, gql, next);
+        return await instance[f.meta.key].bind(instance)(
+          ...finalArgs,
+          gql,
+          next,
+        );
       };
 
       const instance = this._store.getInstance(f.meta.classType);
