@@ -2,7 +2,7 @@ import { InterfaceType as T, ClassType } from "graphql-composer";
 import {
   MetadataStorage,
   TypeParams,
-  MetaType,
+  ExtensionsType,
   InterfaceTypeParams,
 } from "../..";
 
@@ -28,17 +28,18 @@ export function InterfaceType(
       finalParams = params;
     }
 
-    const meta: MetaType = {
-      key: target.name,
-      kind: "interface",
-      classType: target,
-      params: finalParams,
-      meta: {},
+    const meta: ExtensionsType = {
+      decoratorInfos: {
+        key: target.name,
+        kind: "interface",
+        classType: target,
+        params: finalParams,
+      },
     };
 
     const item = T.create<any>(target as ClassType)
       .setName(finalName)
-      .setMeta(meta)
+      .setExtensions(meta)
       .setTypeResolver(finalParams.typeResolver);
 
     MetadataStorage.instance.addInterfaceType(item);

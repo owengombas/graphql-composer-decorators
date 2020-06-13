@@ -1,6 +1,6 @@
 import {
   TypeFunction,
-  FieldParams,
+  ObjectFieldParams,
   DecoratorHelper,
   MetadataStorage,
 } from "../..";
@@ -8,19 +8,20 @@ import {
 export function InterfaceField();
 export function InterfaceField(name: string);
 export function InterfaceField(type: TypeFunction);
-export function InterfaceField(params: FieldParams);
-export function InterfaceField(type: TypeFunction, params: FieldParams);
-export function InterfaceField(name: string, params: FieldParams);
-export function InterfaceField(type: TypeFunction, params: FieldParams);
+export function InterfaceField(params: ObjectFieldParams);
+export function InterfaceField(type: TypeFunction, params: ObjectFieldParams);
+export function InterfaceField(name: string, params: ObjectFieldParams);
+export function InterfaceField(type: TypeFunction, name: string);
+export function InterfaceField(type: TypeFunction, params: ObjectFieldParams);
 export function InterfaceField(
   type: TypeFunction,
   name: string,
-  params: FieldParams,
+  params: ObjectFieldParams,
 );
 export function InterfaceField(
-  nameOrTypeOrParams?: string | TypeFunction | FieldParams,
-  nameOrParams?: string | FieldParams,
-  params?: FieldParams,
+  nameOrTypeOrParams?: string | TypeFunction | ObjectFieldParams,
+  nameOrParams?: string | ObjectFieldParams,
+  params?: ObjectFieldParams,
 ) {
   return DecoratorHelper.getAddFieldFunction(
     (field) => MetadataStorage.instance.addInterfaceField(field),

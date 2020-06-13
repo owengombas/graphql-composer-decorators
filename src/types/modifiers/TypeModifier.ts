@@ -1,4 +1,4 @@
 import { GQLType } from "graphql-composer";
-import { MetaType } from "../../interfaces";
+import { ExtensionsType } from "../../interfaces";
 
-export type TypeModifier = (type: GQLType<any, any, MetaType>) => any;
+export type TypeModifier = (type: GQLType<any, any, ExtensionsType>) => any;

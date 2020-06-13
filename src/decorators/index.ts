@@ -4,7 +4,8 @@ export * from "./fields/InputField";
 export * from "./fields/InterfaceField";
 
 export * from "./meta/Description";
-export * from "./meta/Meta";
+export * from "./meta/Extensions";
+export * from "./meta/Directive";
 
 export * from "./resolver/Resolver";
 export * from "./resolver/queries/Query";

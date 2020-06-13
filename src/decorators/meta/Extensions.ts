@@ -1,7 +1,9 @@
 import { KeyValue } from "graphql-composer";
 import { MetadataStorage } from "../..";
 
-export function Meta<MetaType = KeyValue>(meta: MetaType) {
+export function Extensions<ExtensionsType = KeyValue>(
+  extensions: ExtensionsType,
+) {
   return (
     prototype: Function | Object,
     propertyKey?,
@@ -12,9 +14,9 @@ export function Meta<MetaType = KeyValue>(meta: MetaType) {
         classType: prototype,
         key: prototype.name,
         modifier: (t) =>
-          t.setMeta({
-            ...t.meta,
-            meta,
+          t.setExtensions({
+            ...t.extensions,
+            ...extensions,
           }),
       });
     } else {
@@ -22,9 +24,9 @@ export function Meta<MetaType = KeyValue>(meta: MetaType) {
         classType: prototype.constructor,
         key: propertyKey,
         modifier: (f) =>
-          f.setMeta({
-            ...f.meta,
-            meta,
+          f.setExtensions({
+            ...f.extensions,
+            ...extensions,
           }),
       });
     }

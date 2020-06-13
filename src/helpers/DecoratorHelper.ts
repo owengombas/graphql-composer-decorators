@@ -1,13 +1,13 @@
 import "reflect-metadata";
-import { FieldParams, TypeFunction, MetaType } from "..";
+import { ObjectFieldParams, TypeFunction, ExtensionsType } from "..";
 import { Field } from "graphql-composer";
 
 export class DecoratorHelper {
   static getAddFieldFunction(
     cb: (field: Field) => void,
-    nameOrTypeOrParams?: string | TypeFunction | FieldParams,
-    nameOrParams?: string | FieldParams,
-    params?: FieldParams,
+    nameOrTypeOrParams?: string | TypeFunction | ObjectFieldParams,
+    nameOrParams?: string | ObjectFieldParams,
+    params?: ObjectFieldParams,
   ) {
     return (target: Object, key: string, descriptor: PropertyDescriptor) => {
       let typeFn = () => Reflect.getMetadata("design:type", target, key);
@@ -17,7 +17,7 @@ export class DecoratorHelper {
       }
 
       let finalName: string = key;
-      let finalParams: FieldParams = {};
+      let finalParams: ObjectFieldParams = {};
 
       if (params) {
         typeFn = nameOrTypeOrParams as TypeFunction;
@@ -34,21 +34,22 @@ export class DecoratorHelper {
       if (typeof nameOrTypeOrParams === "string") {
         finalName = nameOrTypeOrParams as string;
       } else if (typeof nameOrTypeOrParams === "object") {
-        finalParams = nameOrTypeOrParams as FieldParams;
+        finalParams = nameOrTypeOrParams as ObjectFieldParams;
       } else if (typeof nameOrTypeOrParams === "function") {
         typeFn = nameOrTypeOrParams;
       }
 
-      const meta: MetaType<FieldParams> = {
-        key,
-        kind: "field",
-        classType: target.constructor,
-        type: typeFn,
-        params: finalParams,
-        meta: {},
+      const meta: ExtensionsType<ObjectFieldParams> = {
+        decoratorInfos: {
+          key,
+          kind: "field",
+          classType: target.constructor,
+          type: typeFn,
+          params: finalParams,
+        },
       };
 
-      const field = Field.create<any>(finalName, Boolean).setMeta(meta);
+      const field = Field.create<any>(finalName, Boolean).setExtensions(meta);
 
       if (descriptor) {
         field.setResolver(descriptor.value);

@@ -1,6 +1,6 @@
 import {
   TypeFunction,
-  FieldParams,
+  ObjectFieldParams,
   DecoratorHelper,
   MetadataStorage,
 } from "../../..";
@@ -8,19 +8,19 @@ import {
 export function Subscription();
 export function Subscription(name: string);
 export function Subscription(type: TypeFunction);
-export function Subscription(params: FieldParams);
-export function Subscription(type: TypeFunction, params: FieldParams);
-export function Subscription(name: string, params: FieldParams);
-export function Subscription(type: TypeFunction, params: FieldParams);
+export function Subscription(params: ObjectFieldParams);
+export function Subscription(type: TypeFunction, params: ObjectFieldParams);
+export function Subscription(name: string, params: ObjectFieldParams);
+export function Subscription(type: TypeFunction, params: ObjectFieldParams);
 export function Subscription(
   type: TypeFunction,
   name: string,
-  params: FieldParams,
+  params: ObjectFieldParams,
 );
 export function Subscription(
-  nameOrTypeOrParams?: string | TypeFunction | FieldParams,
-  nameOrParams?: string | FieldParams,
-  params?: FieldParams,
+  nameOrTypeOrParams?: string | TypeFunction | ObjectFieldParams,
+  nameOrParams?: string | ObjectFieldParams,
+  params?: ObjectFieldParams,
 ) {
   return DecoratorHelper.getAddFieldFunction(
     (field) => MetadataStorage.instance.addSubscription(field),

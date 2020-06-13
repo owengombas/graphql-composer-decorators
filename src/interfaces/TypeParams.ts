@@ -6,7 +6,7 @@ import {
 } from "graphql-composer";
 
 export class TypeParams {
-  partial?: boolean;
+  nullable?: boolean;
   required?: boolean;
   hidden?: boolean;
   extends?: ClassType | InputType | ObjectType | InterfaceType;

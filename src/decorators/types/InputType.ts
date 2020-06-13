@@ -1,5 +1,5 @@
 import { InputType as T, ClassType } from "graphql-composer";
-import { MetadataStorage, TypeParams, MetaType } from "../..";
+import { MetadataStorage, TypeParams, ExtensionsType } from "../..";
 
 export function InputType();
 export function InputType(name: string);
@@ -23,17 +23,18 @@ export function InputType(
       finalParams = params;
     }
 
-    const meta: MetaType = {
-      key: target.name,
-      kind: "input",
-      classType: target,
-      params: finalParams,
-      meta: {},
+    const meta: ExtensionsType = {
+      decoratorInfos: {
+        key: target.name,
+        kind: "input",
+        classType: target,
+        params: finalParams,
+      },
     };
 
     const item = T.create<any>(target as ClassType)
       .setName(finalName)
-      .setMeta(meta);
+      .setExtensions(meta);
 
     MetadataStorage.instance.addInputType(item);
   };

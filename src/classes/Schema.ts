@@ -14,14 +14,8 @@ export class Schema extends GQLComposerSchema {
   load(...classes: LoadClass[]) {
     this._loadClasses = classes;
     this.loadClasses();
-    return this;
-  }
-
-  build() {
     this.addTypes(...MetadataStorage.instance.build());
-    super.build();
-
-    return this.built;
+    return this;
   }
 
   static create(...types: (GQLAnyType | Wrapper)[]) {

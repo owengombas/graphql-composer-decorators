@@ -11,29 +11,31 @@ import {
   ResolveFunction,
   Args,
   FieldType,
-  Nullable,
   RequiredType,
   NullableType,
-  Required,
   UnionType,
   GQLAnyType,
+  N,
+  R,
 } from "graphql-composer";
 import {
   Kind,
-  MetaType,
+  ExtensionsType,
   DIStore,
-  FieldParams,
+  ObjectFieldParams,
   ObjectTypeParams,
   TypeParams,
   BuildingFieldParams,
   Modifier,
+  TypeModifier,
+  FieldModifier,
+  DecoratorInfos,
 } from "..";
-import { FieldModifier, TypeModifier } from "../types";
 
 export type TypeMap = {
-  interface?: InterfaceType<any, MetaType>;
-  input?: InputType<any, MetaType>;
-  object?: ObjectType<any, MetaType>;
+  interface?: InterfaceType<any, ExtensionsType>;
+  input?: InputType<any, ExtensionsType>;
+  object?: ObjectType<any, ExtensionsType>;
 };
 
 export class MetadataStorage {
@@ -50,39 +52,58 @@ export class MetadataStorage {
 
   private _queryType = ObjectType.create("Query") as ObjectType<
     any,
-    MetaType<ObjectTypeParams>
+    ExtensionsType<ObjectTypeParams>
   >;
   private _mutationType = ObjectType.create("Mutation") as ObjectType<
     any,
-    MetaType<ObjectTypeParams>
+    ExtensionsType<ObjectTypeParams>
   >;
   private _subscriptionType = ObjectType.create("Subscription") as ObjectType<
     any,
-    MetaType<ObjectTypeParams>
+    ExtensionsType<ObjectTypeParams>
   >;
 
-  private _queries: Field<any, MetaType<BuildingFieldParams>>[] = [];
-  private _mutations: Field<any, MetaType<BuildingFieldParams>>[] = [];
-  private _subscriptions: Field<any, MetaType<BuildingFieldParams>>[] = [];
+  private _queries: Field<any, ExtensionsType<BuildingFieldParams>>[] = [];
+  private _mutations: Field<any, ExtensionsType<BuildingFieldParams>>[] = [];
+  private _subscriptions: Field<
+    any,
+    ExtensionsType<BuildingFieldParams>
+  >[] = [];
 
-  private _allTypes: GQLType<any, any, MetaType<TypeParams>>[] = [];
-  private _objectTypes: ObjectType<any, MetaType<ObjectTypeParams>>[] = [];
-  private _inputTypes: InputType<any, MetaType<TypeParams>>[] = [];
-  private _interfaceTypes: InterfaceType<any, MetaType<TypeParams>>[] = [];
+  private _allTypes: GQLType<any, any, ExtensionsType<TypeParams>>[] = [];
+  private _objectTypes: ObjectType<
+    any,
+    ExtensionsType<ObjectTypeParams>
+  >[] = [];
+  private _inputTypes: InputType<any, ExtensionsType<TypeParams>>[] = [];
+  private _interfaceTypes: InterfaceType<
+    any,
+    ExtensionsType<TypeParams>
+  >[] = [];
   private _classTypeMap: Map<Function, TypeMap> = new Map();
 
-  private _allFields: GQLField<any, any, MetaType<BuildingFieldParams>>[] = [];
-  private _fields: Field<any, MetaType<BuildingFieldParams>>[] = [];
-  private _objectFields: Field<any, MetaType<BuildingFieldParams>>[] = [];
-  private _inputFields: InputField<any, MetaType<BuildingFieldParams>>[] = [];
-  private _interfaceFields: Field<any, MetaType<BuildingFieldParams>>[] = [];
+  private _allFields: GQLField<
+    any,
+    any,
+    ExtensionsType<BuildingFieldParams>
+  >[] = [];
+  private _fields: Field<any, ExtensionsType<BuildingFieldParams>>[] = [];
+  private _objectFields: Field<any, ExtensionsType<BuildingFieldParams>>[] = [];
+  private _inputFields: InputField<
+    any,
+    ExtensionsType<BuildingFieldParams>
+  >[] = [];
+  private _interfaceFields: Field<
+    any,
+    ExtensionsType<BuildingFieldParams>
+  >[] = [];
 
   private _fieldModifiers: Modifier<FieldModifier>[] = [];
   private _typeModifiers: Modifier<TypeModifier>[] = [];
 
-  private _args: Args<any, MetaType<FieldParams>>[] = [];
+  private _args: Args<any, ExtensionsType<ObjectFieldParams>>[] = [];
 
-  private _built: GQLAnyType<any, MetaType>[] = [];
+  private _built: GQLAnyType<any, ExtensionsType>[] = [];
 
   get built() {
     return this._built;
@@ -151,23 +172,14 @@ export class MetadataStorage {
       ...this._inputTypes,
     ];
 
-    this._allFields = [
-      ...this._objectFields,
-      ...this._interfaceFields,
-      ...this._inputFields,
-      ...this._queries,
-      ...this._mutations,
-      ...this._subscriptions,
-    ];
-
     // Create type map
     this._allTypes.map((t) => {
-      const el = this._classTypeMap.get(t.meta.classType);
-      const value = el || {};
+      const el = this._classTypeMap.get(t.extensions.decoratorInfos.classType);
+      const value: TypeMap = el || {};
 
-      value[t.meta.kind] = t;
+      value[t.extensions.decoratorInfos.kind] = t;
 
-      this._classTypeMap.set(t.meta.classType, value);
+      this._classTypeMap.set(t.extensions.decoratorInfos.classType, value);
     });
 
     this._fields.map((f) => {
@@ -179,13 +191,22 @@ export class MetadataStorage {
       );
     });
 
+    this._allFields = [
+      ...this._objectFields,
+      ...this._interfaceFields,
+      ...this._inputFields,
+      ...this._queries,
+      ...this._mutations,
+      ...this._subscriptions,
+    ];
+
     this.populateFields(this._objectFields, "object");
     this.populateFields(this._interfaceFields, "interface");
     this.populateFields(this._inputFields, "input");
 
     this.resolveFieldsType();
-    this.applyIhneritanceToTypes();
     this.applyImplementations();
+    this.applyInheritance();
     this.populateArgs();
 
     this.applyTypesModifiers();
@@ -195,10 +216,11 @@ export class MetadataStorage {
     this.createResolver(this._mutations, this._mutationType);
     this.createResolver(this._subscriptions, this._subscriptionType);
 
+    // Create resolver for fields of object types
     this._objectTypes.map((obj) => {
       const resolvableFields = obj.fields.filter((f) => f.resolver) as Field<
         any,
-        MetaType<FieldParams>
+        ExtensionsType<ObjectFieldParams>
       >[];
       if (resolvableFields.length > 0) {
         this.addResolver(obj.classType);
@@ -208,8 +230,8 @@ export class MetadataStorage {
 
     this._built = [this._queryType, ...this._allTypes, ...this.built].filter(
       (t) => {
-        if (t.meta) {
-          return !t.meta.params.hidden;
+        if (t.extensions) {
+          return !t.extensions?.decoratorInfos?.params?.hidden;
         }
         return true;
       },
@@ -227,14 +249,24 @@ export class MetadataStorage {
   }
 
   private addFieldWithoutDuplication(
-    fields: GQLField<any, any, MetaType<FieldParams>>[],
-    field: GQLField<any, any, MetaType<FieldParams>>,
+    fields: GQLField<any, any, ExtensionsType<BuildingFieldParams>>[],
+    field: GQLField<any, any, ExtensionsType<BuildingFieldParams>>,
   ) {
     const exists = fields.find((f) => {
-      return (f.meta as MetaType).key === field.meta.key;
+      const fmeta = f.extensions as ExtensionsType;
+      return (
+        fmeta.decoratorInfos.key === field.extensions.decoratorInfos.key &&
+        fmeta.decoratorInfos.classType ==
+          field.extensions.decoratorInfos.classType
+      );
     });
     if (!exists) {
-      fields.push(field);
+      if (field instanceof InputField) {
+        fields.push(field.copy());
+      }
+      if (field instanceof Field) {
+        fields.push(field.copy());
+      }
     }
   }
 
@@ -245,7 +277,10 @@ export class MetadataStorage {
   private applyFieldModifiers() {
     this._fieldModifiers.map((fm) => {
       const f = this._allFields.find((f) => {
-        return fm.classType === f.meta.classType && fm.key === f.meta.key;
+        return (
+          fm.classType === f.extensions.decoratorInfos.classType &&
+          fm.key === f.extensions.decoratorInfos.key
+        );
       });
       if (f) {
         fm.modifier(f);
@@ -257,14 +292,18 @@ export class MetadataStorage {
     this._typeModifiers.map((tm) => {
       const instance = this._store.getInstance(tm.classType);
       if (instance) {
+        // If the class is decorated by @Resolver, apply to modifier to the fields of the class
         this._allFields.map((f) => {
-          if (tm.classType === f.meta.classType) {
+          if (tm.classType === f.extensions.decoratorInfos.classType) {
             tm.fieldModifier(f);
           }
         });
       } else {
         const t = this._allTypes.find((t) => {
-          return tm.classType === t.meta.classType && tm.key === t.meta.key;
+          return (
+            tm.classType === t.extensions.decoratorInfos.classType &&
+            tm.key === t.extensions.decoratorInfos.key
+          );
         });
         if (t) {
           tm.modifier(t);
@@ -275,7 +314,7 @@ export class MetadataStorage {
 
   private applyImplementations() {
     this._objectTypes.map((t) => {
-      const interfaces = t.meta.params.implements;
+      const interfaces = t.extensions.decoratorInfos.params.implements;
       if (interfaces) {
         interfaces.map((i) => {
           if (i instanceof InterfaceType) {
@@ -302,25 +341,26 @@ export class MetadataStorage {
     allFields.map((f) => {
       this._args.map((a) => {
         if (
-          a.meta.classType === f.meta.classType &&
-          a.meta.key === f.meta.key
+          a.extensions.decoratorInfos.classType ===
+            f.extensions.decoratorInfos.classType &&
+          a.extensions.decoratorInfos.key === f.extensions.decoratorInfos.key
         ) {
-          if (a.meta.kind === "flat-args") {
+          if (a.extensions.decoratorInfos.kind === "flat-args") {
             const t: InputType = this.resolveType(
-              a.meta as MetaType,
+              a.extensions.decoratorInfos as DecoratorInfos,
               "input",
             ) as any;
             if (t) {
               a.addArgs(...t.convert(Args).args);
 
-              const typeRef = a.meta.type();
+              const typeRef = a.extensions.decoratorInfos.type();
               a.setClassType(typeRef);
               a.setName((typeRef as Function).name);
             }
             f.addArgs(a);
           } else {
             a.args.map((aChild) => {
-              const t = this.resolveType(a.meta as MetaType, "input");
+              const t = this.resolveType(a.extensions.decoratorInfos, "input");
               aChild.setType(t);
             });
 
@@ -332,35 +372,41 @@ export class MetadataStorage {
   }
 
   private createResolver(
-    fields: Field<any, MetaType<BuildingFieldParams>>[],
-    type: ObjectType<any, MetaType>,
+    fields: Field<any, ExtensionsType<BuildingFieldParams>>[],
+    type: ObjectType<any, ExtensionsType>,
   ) {
     fields.map((f) => {
       const resolver: ResolveFunction = async (args, gql, next) => {
         let finalArgs = [args];
 
+        // find the index of the argument in the method
         if (f.args.length > 1) {
           finalArgs = Object.keys(args).reduce((prev, key) => {
-            const found = f.args.find((a) => a.name === key);
+            const found = f.args.find((a) => a.name === key) as Args<
+              any,
+              ExtensionsType
+            >;
             if (!found) {
               throw new Error(
-                `Argument: ${key} not found in the while querying field: ${f.meta.classType.name} ${f.meta.key}`,
+                `Argument: ${key} not found in the while querying field: ${f.extensions.decoratorInfos.classType.name} ${f.extensions.decoratorInfos.key}`,
               );
             }
-            prev[found.meta.index] = args[key];
+            prev[found.extensions.decoratorInfos.index] = args[key];
             return prev;
           }, []);
         }
 
-        return await instance[f.meta.key].bind(instance)(
+        return await instance[f.extensions.decoratorInfos.key].bind(instance)(
           ...finalArgs,
           gql,
           next,
         );
       };
 
-      const instance = this._store.getInstance(f.meta.classType);
-      const t = this.resolveType(f.meta, "object");
+      const instance = this._store.getInstance(
+        f.extensions.decoratorInfos.classType,
+      );
+      const t = this.resolveType(f.extensions.decoratorInfos, "object");
       f.setResolver(resolver);
       f.setType(t);
 
@@ -370,23 +416,28 @@ export class MetadataStorage {
 
   private resolveFieldsType() {
     this._allTypes.map((typeDef) => {
-      typeDef.fields.map((f) => {
-        const t = this.resolveType(f.meta as MetaType, typeDef.meta.kind);
+      typeDef.fields.map((f: GQLField<any, any, ExtensionsType>) => {
+        const t = this.resolveType(
+          f.extensions.decoratorInfos,
+          typeDef.extensions.decoratorInfos.kind,
+        );
         f.setType(t);
 
-        if (typeDef.meta.params.partial) {
+        if (typeDef.extensions.decoratorInfos.params.nullable) {
           f.nullable();
         }
-        if (typeDef.meta.params.required) {
+        if (typeDef.extensions.decoratorInfos.params.required) {
           f.required();
         }
       });
     });
   }
 
-  private resolveType(meta: MetaType<FieldParams>, typeKind: Kind) {
-    let res: FieldType;
-    let typeRef: any = meta.type();
+  private resolveType(
+    extensions: DecoratorInfos<ObjectFieldParams>,
+    typeKind: Kind,
+  ): FieldType {
+    const typeRef: any = extensions.type();
 
     if (typeRef instanceof UnionType) {
       // if the union type isn't already compiled,
@@ -411,37 +462,58 @@ export class MetadataStorage {
         typeRef.setTypes(...newTypes);
         this._built.push(typeRef);
       }
-
-      return typeRef;
     }
 
     const t = TypeParser.parse(typeRef as any);
 
+    // If the type is a relation to a ClassType:
     if (!t) {
-      let nullable: typeof NullableType | typeof RequiredType = undefined;
+      if (Array.isArray(typeRef)) {
+        const t = this.resolveType(
+          {
+            ...extensions,
+            type: () => typeRef[0],
+          },
+          typeKind,
+        );
+        return [t];
+      }
+
+      const resolveNullable = {
+        ...extensions,
+        type: () => typeRef.type,
+      };
       if (typeRef instanceof NullableType) {
-        nullable = NullableType;
-        typeRef = typeRef.type;
+        const t = this.resolveType(resolveNullable, typeKind);
+        return N(t);
       }
       if (typeRef instanceof RequiredType) {
-        nullable = RequiredType;
-        typeRef = typeRef.type;
+        const t = this.resolveType(resolveNullable, typeKind);
+        return R(t);
       }
 
       const relationTypes = this._classTypeMap.get(typeRef as Function);
       if (relationTypes) {
         let relationTypeStr: Kind = typeKind;
 
-        switch (meta.params.relationType) {
-          case InputType:
-            relationTypeStr = "input";
-            break;
-          case ObjectType:
-            relationTypeStr = "object";
-            break;
-          case InterfaceType:
-            relationTypeStr = "interface";
-            break;
+        if (extensions.params.relationType) {
+          switch (extensions.params.relationType) {
+            case InputType:
+              if (typeKind === "input") {
+                relationTypeStr = "input";
+              }
+              break;
+            case ObjectType:
+              if (typeKind !== "input") {
+                relationTypeStr = "object";
+              }
+              break;
+            case InterfaceType:
+              if (typeKind !== "input") {
+                relationTypeStr = "interface";
+              }
+              break;
+          }
         }
 
         let relationType = relationTypes[relationTypeStr];
@@ -459,89 +531,84 @@ export class MetadataStorage {
         }
 
         if (relationType) {
-          switch (nullable) {
-            case RequiredType:
-              relationType = Required(relationType);
-              break;
-            case NullableType:
-              relationType = Nullable(relationType);
-              break;
-          }
-          res = relationType as any;
+          return relationType;
         } else {
           throw new Error(
-            `Cannot resolve the relation type of field: ${meta.classType}.${meta.key}, you maybe missed a decorator on the class that correspond to the type`,
+            `Cannot resolve the relation type of field: ${extensions.classType}.${extensions.key}, you maybe missed a decorator on the class that correspond to the type`,
           );
         }
-      } else {
-        res = typeRef;
       }
-    } else {
-      res = typeRef;
     }
 
-    if (!res) {
-      throw new Error(
-        `Cannot resolve the type of field: ${meta.classType}.${meta.key}`,
-      );
-    }
-
-    return res;
+    return typeRef;
   }
 
-  private populateFields(fields: GQLField[], key: Kind) {
+  private populateFields(
+    fields: GQLField<any, any, ExtensionsType>[],
+    key: Kind,
+  ) {
     fields.map((f) => {
-      const t: GQLType<any, any, MetaType<TypeParams>> = this._classTypeMap.get(
-        f.meta.classType,
-      )?.[key];
+      const t: GQLType<
+        any,
+        any,
+        ExtensionsType<TypeParams>
+      > = this._classTypeMap.get(f.extensions.decoratorInfos.classType)?.[key];
       if (t) {
         t.addFields(f);
       }
     });
   }
 
-  private applyIhneritanceToTypes() {
-    this._allTypes.map((t) => {
-      this.applyIhneritance(t);
-    });
-  }
-
-  private applyIhneritance(t: GQLType<any, any, MetaType>) {
-    const apply = (t: GQLType, sup: GQLType) => {
-      t.addFields(...sup.fields);
+  private applyInheritance() {
+    const apply = (t: GQLType<any, any, ExtensionsType>, sup: GQLType) => {
+      sup.fields.map((f: GQLField<any, any, ExtensionsType>) => {
+        // A class who inherit from an another one can override the field definition
+        const exists = t.fields.find(
+          (tf: GQLField<any, any, ExtensionsType>) =>
+            tf.extensions.decoratorInfos.key ===
+            f.extensions.decoratorInfos.key,
+        );
+        if (!exists) {
+          t.addFields(f);
+        }
+      });
 
       if (t instanceof ObjectType && sup instanceof ObjectType) {
         t.addInterfaces(...sup.interfaces);
       }
     };
 
-    const applyFromClass = (superClass: Function) => {
-      const allTypes = this._classTypeMap.get(superClass);
-      if (allTypes) {
-        const superType = allTypes[t.meta.kind];
+    this._allTypes.map((t) => {
+      const applyFromClass = (superClass: Function) => {
+        const allTypes = this._classTypeMap.get(superClass);
+        if (allTypes) {
+          const superType = allTypes[t.extensions.decoratorInfos.kind];
 
-        if (superType) {
-          apply(t, superType);
-          return true;
-        } else {
-          console.warn(
-            `class: ${t.meta.classType.name} (${t.meta.kind}) cannot ihnerit the class ${superClass.name} because they aren't decorated by the same type decorator`,
-          );
+          if (superType) {
+            apply(t, superType);
+            return true;
+          } else {
+            console.warn(
+              `class: ${t.extensions.decoratorInfos.classType.name} (${t.extensions.decoratorInfos.kind}) cannot ihnerit the class ${superClass.name} because they aren't decorated by the same type decorator`,
+            );
+          }
+        }
+        return false;
+      };
+
+      const superClass = Object.getPrototypeOf(
+        t.extensions.decoratorInfos.classType,
+      );
+      if (!applyFromClass(superClass)) {
+        const extendsType = t.extensions.decoratorInfos.params.extends;
+        if (extendsType) {
+          if (extendsType instanceof GQLType) {
+            apply(t, extendsType);
+          } else {
+            applyFromClass(extendsType);
+          }
         }
       }
-      return false;
-    };
-
-    const superClass = Object.getPrototypeOf(t.meta.classType);
-    if (!applyFromClass(superClass)) {
-      const extendsType = t.meta.params.extends;
-      if (extendsType) {
-        if (extendsType instanceof GQLType) {
-          apply(t, extendsType);
-        } else {
-          applyFromClass(extendsType);
-        }
-      }
-    }
+    });
   }
 }
