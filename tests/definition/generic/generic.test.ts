@@ -33,9 +33,9 @@ const schema = Schema.create().load();
 
 describe("Generic type", () => {
   it("Should create a generic type using the function pattern", async () => {
-    const user = schema.types[1] as ComposerObjectType;
-    const userArgs = schema.types[2] as ComposerObjectType;
-    const generic = schema.types[3] as ComposerObjectType;
+    const user = schema.types[0] as ComposerObjectType;
+    const userArgs = schema.types[1] as ComposerObjectType;
+    const generic = schema.types[2] as ComposerObjectType;
 
     expect(user.name).toEqual("User");
     expect(userArgs.name).toEqual("UserArgs");

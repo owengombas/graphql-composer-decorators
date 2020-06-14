@@ -200,6 +200,10 @@ export class MetadataStorage {
       ...this._subscriptions,
     ];
 
+    this._queryType.addFields(...this._queries);
+    this._mutationType.addFields(...this._mutations);
+    this._subscriptionType.addFields(...this._subscriptions);
+
     this.populateFields(this._objectFields, "object");
     this.populateFields(this._interfaceFields, "interface");
     this.populateFields(this._inputFields, "input");
@@ -209,12 +213,9 @@ export class MetadataStorage {
     this.applyInheritance();
     this.populateArgs();
 
-    this.applyTypesModifiers();
-    this.applyFieldModifiers();
-
-    this.createResolver(this._queries, this._queryType);
-    this.createResolver(this._mutations, this._mutationType);
-    this.createResolver(this._subscriptions, this._subscriptionType);
+    this.createResolver(this._queries);
+    this.createResolver(this._mutations);
+    this.createResolver(this._subscriptions);
 
     // Create resolver for fields of object types
     this._objectTypes.map((obj) => {
@@ -224,18 +225,16 @@ export class MetadataStorage {
       >[];
       if (resolvableFields.length > 0) {
         this.addResolver(obj.classType);
-        this.createResolver(resolvableFields, obj);
+        this.createResolver(resolvableFields);
       }
     });
 
-    this._built = [this._queryType, ...this._allTypes, ...this.built].filter(
-      (t) => {
-        if (t.extensions) {
-          return !t.extensions?.decoratorInfos?.params?.hidden;
-        }
-        return true;
-      },
-    );
+    this.applyTypesModifiers();
+    this.applyFieldModifiers();
+
+    if (!this.isEmptyType(this._queryType)) {
+      this._built.push(this._queryType);
+    }
 
     if (!this.isEmptyType(this._mutationType)) {
       this._built.push(this._mutationType);
@@ -244,6 +243,13 @@ export class MetadataStorage {
     if (!this.isEmptyType(this._subscriptionType)) {
       this._built.push(this._subscriptionType);
     }
+
+    this._built = [...this.built, ...this._allTypes].filter((t) => {
+      if (t.extensions) {
+        return !t.extensions?.decoratorInfos?.params?.hidden;
+      }
+      return true;
+    });
 
     return this._built;
   }
@@ -331,56 +337,57 @@ export class MetadataStorage {
   }
 
   private populateArgs() {
-    const allFields = [
-      ...this._fields,
-      ...this._subscriptions,
-      ...this._queries,
-      ...this._mutations,
-    ];
+    this._allFields.map((f) => {
+      if (f instanceof Field) {
+        this._args.map((a) => {
+          if (
+            a.extensions.decoratorInfos.classType ===
+              f.extensions.decoratorInfos.classType &&
+            a.extensions.decoratorInfos.key === f.extensions.decoratorInfos.key
+          ) {
+            if (a.extensions.decoratorInfos.kind === "flat-args") {
+              const t: InputType = this.resolveType(
+                a.extensions.decoratorInfos as DecoratorInfos,
+                "input",
+              ) as any;
+              if (t) {
+                a.addArgs(...t.convert(Args).args);
 
-    allFields.map((f) => {
-      this._args.map((a) => {
-        if (
-          a.extensions.decoratorInfos.classType ===
-            f.extensions.decoratorInfos.classType &&
-          a.extensions.decoratorInfos.key === f.extensions.decoratorInfos.key
-        ) {
-          if (a.extensions.decoratorInfos.kind === "flat-args") {
-            const t: InputType = this.resolveType(
-              a.extensions.decoratorInfos as DecoratorInfos,
-              "input",
-            ) as any;
-            if (t) {
-              a.addArgs(...t.convert(Args).args);
+                const typeRef = a.extensions.decoratorInfos.type();
+                a.setClassType(typeRef);
+                a.setName((typeRef as Function).name);
+              }
+              f.addArgs(a);
+            } else {
+              a.args.map((aChild) => {
+                const t = this.resolveType(
+                  a.extensions.decoratorInfos,
+                  "input",
+                );
+                aChild.setType(t);
+              });
 
-              const typeRef = a.extensions.decoratorInfos.type();
-              a.setClassType(typeRef);
-              a.setName((typeRef as Function).name);
+              f.addArgs(a);
             }
-            f.addArgs(a);
-          } else {
-            a.args.map((aChild) => {
-              const t = this.resolveType(a.extensions.decoratorInfos, "input");
-              aChild.setType(t);
-            });
-
-            f.addArgs(a);
           }
-        }
-      });
+        });
+      }
     });
   }
 
   private createResolver(
     fields: Field<any, ExtensionsType<BuildingFieldParams>>[],
-    type: ObjectType<any, ExtensionsType>,
   ) {
     fields.map((f) => {
       const resolver: ResolveFunction = async (args, gql, next) => {
         let finalArgs = [args];
 
+        if (f.args.length <= 0) {
+          finalArgs = [];
+        }
+
         // find the index of the argument in the method
-        if (f.args.length > 1) {
+        if (f.args.length > 1 || !f.args[0]?.classType) {
           finalArgs = Object.keys(args).reduce((prev, key) => {
             const found = f.args.find((a) => a.name === key) as Args<
               any,
@@ -409,8 +416,6 @@ export class MetadataStorage {
       const t = this.resolveType(f.extensions.decoratorInfos, "object");
       f.setResolver(resolver);
       f.setType(t);
-
-      type.addFields(f);
     });
   }
 
@@ -534,7 +539,7 @@ export class MetadataStorage {
           return relationType;
         } else {
           throw new Error(
-            `Cannot resolve the relation type of field: ${extensions.classType}.${extensions.key}, you maybe missed a decorator on the class that correspond to the type`,
+            `Cannot resolve the relation type of field: ${extensions.classType.name}.${extensions.key}, you maybe missed a decorator on the class that correspond to the type`,
           );
         }
       }

@@ -13,7 +13,7 @@ const schema = Schema.create().load();
 
 describe("Extensions", () => {
   it("Should add the extensions", async () => {
-    const user = schema.types[1] as ComposerObjectType;
+    const user = schema.types[0] as ComposerObjectType;
 
     expect(user.extensions.type).toBe("user");
     expect(user.fields[0].extensions.field).toBe("name");

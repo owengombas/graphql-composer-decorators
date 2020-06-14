@@ -30,9 +30,9 @@ const schema = Schema.create()
 
 describe("Object type", () => {
   it("Should create an object type", async () => {
-    const testObject1 = schema.types[1] as ComposerObjectType;
-    const testObject2 = schema.types[2] as ComposerObjectType;
-    const testObject3 = schema.types[3] as ComposerObjectType;
+    const testObject1 = schema.types[0] as ComposerObjectType;
+    const testObject2 = schema.types[1] as ComposerObjectType;
+    const testObject3 = schema.types[2] as ComposerObjectType;
 
     expect(testObject1.name).toBe("TestObject1");
     expect(testObject2.name).toBe("TestObject2");

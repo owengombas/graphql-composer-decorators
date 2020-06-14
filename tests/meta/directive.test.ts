@@ -17,7 +17,7 @@ const schema = Schema.create().load();
 
 describe("Directive", () => {
   it("Should add the directive", async () => {
-    const user = schema.types[1] as ComposerObjectType;
+    const user = schema.types[0] as ComposerObjectType;
 
     expect(user.directives).toEqual([
       ComposerDirective.create("deprecated").addArg("reason", "type"),

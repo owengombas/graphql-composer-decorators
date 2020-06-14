@@ -30,9 +30,9 @@ const schema = Schema.create()
 
 describe("InputType", () => {
   it("Should create an input type", async () => {
-    const testInterface1 = schema.types[1] as ComposerInterfaceType;
-    const testInterface2 = schema.types[2] as ComposerInterfaceType;
-    const testInterface3 = schema.types[3] as ComposerInterfaceType;
+    const testInterface1 = schema.types[0] as ComposerInterfaceType;
+    const testInterface2 = schema.types[1] as ComposerInterfaceType;
+    const testInterface3 = schema.types[2] as ComposerInterfaceType;
 
     expect(testInterface1.name).toBe("TestInterface1");
     expect(testInterface2.name).toBe("TestInterface2");
