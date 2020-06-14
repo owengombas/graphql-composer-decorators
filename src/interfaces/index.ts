@@ -6,3 +6,4 @@ export * from "./InterfaceTypeParams";
 export * from "./TypeParams";
 export * from "./BuildingFieldParams";
 export * from "./Modifier";
+export * from "./SubscriptionParams";

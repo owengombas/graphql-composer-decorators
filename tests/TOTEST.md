@@ -8,3 +8,4 @@
 - Union type
 - @Extensions, @Description, @Directive
 - Implements with inheritance
+- Subscriptions

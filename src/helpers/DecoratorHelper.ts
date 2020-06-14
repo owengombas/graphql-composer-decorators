@@ -1,10 +1,20 @@
 import "reflect-metadata";
-import { ObjectFieldParams, TypeFunction, ExtensionsType } from "..";
+import {
+  ObjectFieldParams,
+  TypeFunction,
+  ExtensionsType,
+  BuildingFieldParams,
+} from "..";
 import { Field } from "graphql-composer";
 
 export class DecoratorHelper {
   static getAddFieldFunction(
-    cb: (field: Field) => void,
+    cb: (
+      field: Field<string, ExtensionsType<BuildingFieldParams>>,
+      target: Object,
+      key: string,
+      descriptor: PropertyDescriptor,
+    ) => void,
     nameOrTypeOrParams?: string | TypeFunction | ObjectFieldParams,
     nameOrParams?: string | ObjectFieldParams,
     params?: ObjectFieldParams,
@@ -55,7 +65,7 @@ export class DecoratorHelper {
         field.setResolver(descriptor.value);
       }
 
-      cb(field);
+      cb(field, target, key, descriptor);
     };
   }
 }

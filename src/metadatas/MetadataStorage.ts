@@ -182,6 +182,7 @@ export class MetadataStorage {
       this._classTypeMap.set(t.extensions.decoratorInfos.classType, value);
     });
 
+    // Add the @Field fields to the corresponding types, but check if it doesn't already exists (don't override)
     this._fields.map((f) => {
       this.addFieldWithoutDuplication(this._objectFields, f);
       this.addFieldWithoutDuplication(this._interfaceFields, f);

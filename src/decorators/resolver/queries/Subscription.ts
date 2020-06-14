@@ -1,29 +1,33 @@
 import {
   TypeFunction,
-  ObjectFieldParams,
+  SubscriptionParams,
   DecoratorHelper,
   MetadataStorage,
 } from "../../..";
+import { ExtensionsType } from "../../../interfaces";
+import { Field } from "graphql-composer";
 
-export function Subscription();
-export function Subscription(name: string);
-export function Subscription(type: TypeFunction);
-export function Subscription(params: ObjectFieldParams);
-export function Subscription(type: TypeFunction, params: ObjectFieldParams);
-export function Subscription(name: string, params: ObjectFieldParams);
-export function Subscription(type: TypeFunction, params: ObjectFieldParams);
+export function Subscription(params: SubscriptionParams);
+export function Subscription(type: TypeFunction, params: SubscriptionParams);
+export function Subscription(name: string, params: SubscriptionParams);
+export function Subscription(type: TypeFunction, params: SubscriptionParams);
 export function Subscription(
   type: TypeFunction,
   name: string,
-  params: ObjectFieldParams,
+  params: SubscriptionParams,
 );
 export function Subscription(
-  nameOrTypeOrParams?: string | TypeFunction | ObjectFieldParams,
-  nameOrParams?: string | ObjectFieldParams,
-  params?: ObjectFieldParams,
+  nameOrTypeOrParams?: string | TypeFunction | SubscriptionParams,
+  nameOrParams?: string | SubscriptionParams,
+  params?: SubscriptionParams,
 ) {
   return DecoratorHelper.getAddFieldFunction(
-    (field) => MetadataStorage.instance.addSubscription(field),
+    (field: Field<string, ExtensionsType<SubscriptionParams>>) => {
+      field.setSubscription(
+        field.extensions.decoratorInfos.params.subscription,
+      );
+      MetadataStorage.instance.addSubscription(field);
+    },
     nameOrTypeOrParams,
     nameOrParams,
     params,
