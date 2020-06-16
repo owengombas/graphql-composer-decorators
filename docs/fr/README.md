@@ -12,7 +12,7 @@
 </p>
 
 # graphql-composer-decorators
-GraphQL vient révolutionner le développement backend, le fait qu'il faille déclarer des types est quelque chose de très utile, cependant cela peut entraîner une duplication du code et donc nuire à la stabilité de votre application. En effet en se basant sur le principe DRY (Don't Repeat Yourself) le fait de déclarer plusieurs fois un même élément de façon différente devrait être évité, car lorsque cet élément change il faut donc modifier plusieurs parties de code, ainsi si une seule de ces parties est omise cela peut engendrer des problèmes dans votre application et plus votre application grandie plus il sera dure de maintenir celle-ci.
+GraphQL vient révolutionner le développement backend, le fait qu'il faille déclarer des types est quelque chose de très utile, cependant cela peut entraîner une duplication du code et donc nuire à la stabilité de votre application. En effet en se basant sur le principe DRY (Don't Repeat Yourself) le fait de déclarer plusieurs fois un même élément de façon différente devrait être évité, car lorsque cet élément change il faut donc modifier plusieurs parties de code, ainsi si une seule de ces parties est omise cela peut engendrer des problèmes dans votre application et plus celle-ci grandie plus il sera dure de maintenir celle-ci.
 
 ### [Aller à l'introduction](/graphql-composer-decorators/fr/intro/introduction)
 
