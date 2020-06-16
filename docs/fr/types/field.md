@@ -28,7 +28,7 @@ input UserInput {
 
 ## `@ObjectField`
 Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champ de `@ObjectType`.  
-Son fonctionnement est détaillé sur la [page dédiée au type ObjectType](/fr/types/object-type#objectfield).
+Son fonctionnement est détaillé sur la [page dédiée au type ObjectType](/graphql-composer-decorators/fr/types/object-type#objectfield).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -53,7 +53,7 @@ input UserInput {
 
 ## `@InterfaceField`
 Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champ de `@InterfaceType`.  
-Son fonctionnement est détaillé sur la [page dédiée au type InterfaceType](/fr/types/interface-type#interfacefield).
+Son fonctionnement est détaillé sur la [page dédiée au type InterfaceType](/graphql-composer-decorators/fr/types/interface-type#interfacefield).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -78,7 +78,7 @@ input UserInput {
 
 ## `@InputField`
 Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champ de `@InputType`.  
-Son fonctionnement est détaillé sur la [page dédiée au type InputType](/fr/types/input-type#inputfield).
+Son fonctionnement est détaillé sur la [page dédiée au type InputType](/graphql-composer-decorators/fr/types/input-type#inputfield).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -131,9 +131,9 @@ type User {
 Ce paramètre pâlit aux limitations de TypeScript.  
 Il est nécessaire quand le type ne peut être inféré comme avec:
 - Des dépendances circulaires (A dépend de B et B dépend de A)
-- Des tableaux ([détails](/fr/#tableau))
-- Des types génériques ([détails](#types-generiques))
-- Des types qui diffèrent du type inféré (comme pour les [enum](/fr/types/enum-type) ou [union](/fr/types/union-type))
+- Des tableaux ([détails](/graphql-composer-decorators/fr/#tableaux))
+- Des types génériques ([détails](/graphql-composer-decorators/fr/#types-generiques))
+- Des types qui diffèrent du type inféré (comme pour les [enum](/graphql-composer-decorators/fr/types/enum-type) ou [union](/graphql-composer-decorators/fr/types/union-type))
 - Pour un champ nullable ou requis
 
 ```ts

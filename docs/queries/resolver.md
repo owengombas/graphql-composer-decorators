@@ -3,7 +3,7 @@ A resolver is a class that hosts **query**, **mutation** or **subscription**.
 
 ## `@Query` and `@Mutation`
 These two decorators work in the same way, except that one declares a field in your `Query` type and the other in your `Mutation` type.
-The final result is that the `@Field` decorator declares a field in its respective type (`type Query` or `type Mutation`), it then accepts the same parameters as `@Field` ([details](/types/field)).
+The final result is that the `@Field` decorator declares a field in its respective type (`type Query` or `type Mutation`), it then accepts the same parameters as `@Field` ([details](/graphql-composer-decorators/types/field)).
 ```ts
 @ObjectType()
 class Response {

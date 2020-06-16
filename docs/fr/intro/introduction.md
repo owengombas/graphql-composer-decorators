@@ -28,7 +28,7 @@ class User {
 }
 ```
 
-#### Tableau
+#### Tableaux
 Un décorateur ne peut pas déterminer le type d'un tableau.
 **Ceci ne fonctionnera pas**
 ```ts

@@ -116,4 +116,4 @@ class User {
 ```
 
 ## The middlewares
-The [use of middlewares](/queries/middlewares) on the whole class and on the fields is possible.
+The [use of middlewares](/graphql-composer-decorators/queries/middlewares) on the whole class and on the fields is possible.

@@ -1,6 +1,6 @@
 # Union type
 Union types in GraphQL allow you to create types that group several of them together.
-Let's take a simple example in which a person can have a pet, a dog **or** a cat. (this example is also feasible using [interfaces](/types/interface-type)) >the word **or** is not chosen at random, this describes what a `union` type is.
+Let's take a simple example in which a person can have a pet, a dog **or** a cat. (this example is also feasible using [interfaces](/graphql-composer-decorators/types/interface-type)) >the word **or** is not chosen at random, this describes what a `union` type is.
 
 To describe this situation with GraphQL we will use the "union" types.
 ```graphql
@@ -55,7 +55,7 @@ const catOrDog = UnionType.create("CatOrDog", Cat, Dog)
 ```
 
 ### Using a `union`
-This is done in the same way as an [enum](/types/enum-type) type. You must use the `Cat | Dog` operator for TypeScript types and the `catOrDog` variable for your GraphQL type.
+This is done in the same way as an [enum](/graphql-composer-decorators/types/enum-type) type. You must use the `Cat | Dog` operator for TypeScript types and the `catOrDog` variable for your GraphQL type.
 
 ```ts
 @ObjectType()

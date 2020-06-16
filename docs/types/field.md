@@ -28,7 +28,7 @@ input UserInput {
 
 ## `@ObjectField`
 Works exactly like `@Field` except that it only sets the `@ObjectType` field.  
-Its operation is detailed on the [page dedicated to ObjectType](/types/object-type#objectfield).
+Its operation is detailed on the [page dedicated to ObjectType](/graphql-composer-decorators/types/object-type#objectfield).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -53,7 +53,7 @@ input UserInput {
 
 ## `@InterfaceField`
 Works exactly like `@Field` except that it only sets the `@InterfaceType` field.  
-Its operation is detailed on the [page dedicated to InterfaceType](/types/interface-type#interfacefield).
+Its operation is detailed on the [page dedicated to InterfaceType](/graphql-composer-decorators/types/interface-type#interfacefield).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -78,7 +78,7 @@ input UserInput {
 
 ## `@InputField`
 Works exactly like `@Field` except that it only sets the `@InputType` field.  
-Its operation is detailed on the [page dedicated to InputType](/types/input-type#inputfield).
+Its operation is detailed on the [page dedicated to InputType](/graphql-composer-decorators/types/input-type#inputfield).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -132,9 +132,9 @@ type User {
 This parameter overrides the limitations of TypeScript.  
 It is necessary when the type cannot be inferred as with:
 - Circular dependencies (A depends on B and B depends on A)
-- Tables ([details](/#table))
-- Generic types ([details](#generic types))
-- Types that differ from the inferred type (such as [enum](/types/enum-type) or [union](/types/union-type))
+- Arrays ([details](/graphql-composer-decorators/intro/introduction/#array))
+- Generic types ([details](/graphql-composer-decorators/#generic-types))
+- Types that differ from the inferred type (such as [enum](/graphql-composer-decorators/types/enum-type) or [union](/graphql-composer-decorators/types/union-type))
 - For a nullable or required field
 
 ```ts

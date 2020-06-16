@@ -10,13 +10,22 @@ There are also additional decorators such as `@ObjectField` `@InputField` and `@
 ## `ArgsType`
 It does not have an `ArgsType`, as it does not exist in GraphQL. On the other hand, it is on the query argument declaration side that we will be able to use a whole **input** type to declare all the arguments with the `@Args` decorator (just like `ArgsType`):
 ```ts
-@InputType() class User { @Field() username: string;
+@InputType()
+class User {
+  @Field()
+  username: string;
 
-@Field()
-email: string;
+  @Field()
+  email: string;
 }
 
-@Resolver() class Resolver { @Query() getUser( @Args() user: User ): Boolean.
+@Resolver()
+class Resolver {
+  @Query()
+  getUser(@Args() user: User): Boolean {
+    // ...
+  }
+}
 ```
 
 which gives in SDL:

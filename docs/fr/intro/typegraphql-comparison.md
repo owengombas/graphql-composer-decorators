@@ -10,13 +10,22 @@ Il y'a également des décorateurs supplémentaires tel que `@ObjectField` `@Inp
 ## `ArgsType`
 Il n'a pas de type `ArgsType`, car n'existant pas dans GraphQL. Ceci peut donc se trouver être peu intuitif. En contre partie c'est du côté de la déclaration des arguments d'une query que l'on va pouvoir utiliser tout un type **input** pour déclarer l'ensemble des arguments avec le décorateur `@Args` (tout comme `ArgsType`):
 ```ts
-@InputType() class User {   @Field()   username: string;
+@InputType()
+class User {
+  @Field()
+  username: string;
 
-@Field()
-email: string;
+  @Field()
+  email: string;
 }
 
-@Resolver() class Resolver {   @Query()   getUser(     @Args()     user: User   ): Boolean {   } }
+@Resolver()
+class Resolver {
+  @Query()
+  getUser(@Args() user: User): Boolean {
+    // ...
+  }
+}
 ```
 
 ce qui donne en SDL:
