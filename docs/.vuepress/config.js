@@ -2,7 +2,7 @@ module.exports = {
   title: "graphql-composer",
   description: "Create your GraphQL API using decorators!",
   lang: "en",
-  base: "/graphql-composer-decorators",
+  base: "/graphql-composer-decorators/",
   locales: {
     "/": {
       path: "/",
@@ -59,6 +59,7 @@ module.exports = {
               "/types/interface-type",
               "/types/union-type",
               "/types/enum-type",
+              "/types/inheritance",
               "/types/generic-type",
               "/types/field",
             ]
@@ -113,6 +114,7 @@ module.exports = {
               "/fr/types/interface-type",
               "/fr/types/union-type",
               "/fr/types/enum-type",
+              "/fr/types/inheritance",
               "/fr/types/generic-type",
               "/fr/types/field",
             ]
