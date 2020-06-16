@@ -1,5 +1,10 @@
 import { ObjectType as T, ClassType } from "graphql-composer";
-import { MetadataStorage, ExtensionsType, ObjectTypeParams } from "../..";
+import {
+  MetadataStorage,
+  ExtensionsType,
+  ObjectTypeParams,
+  DecoratorHelper,
+} from "../..";
 
 export function ObjectType();
 export function ObjectType(name: string);
@@ -11,7 +16,7 @@ export function ObjectType(
 ) {
   return (target: Function) => {
     let finalName = target.name;
-    let finalParams = {};
+    let finalParams: ObjectTypeParams = {};
 
     if (typeof nameOrParams === "string") {
       finalName = nameOrParams;
@@ -34,6 +39,12 @@ export function ObjectType(
 
     const item = T.create<any>(target as ClassType)
       .setName(finalName)
+      .setDescription(finalParams.description)
+      .setDirectives(
+        ...(finalParams.directives || []).map((d) =>
+          DecoratorHelper.parseDirective(d.name, d.args),
+        ),
+      )
       .setExtensions(meta);
 
     MetadataStorage.instance.addObjectType(item);

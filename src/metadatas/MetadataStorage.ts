@@ -101,6 +101,8 @@ export class MetadataStorage {
   private _fieldModifiers: Modifier<FieldModifier>[] = [];
   private _typeModifiers: Modifier<TypeModifier>[] = [];
 
+  private _resolvers: Set<Function> = new Set();
+
   private _args: Args<any, ExtensionsType<ObjectFieldParams>>[] = [];
 
   private _built: GQLAnyType<any, ExtensionsType>[] = [];
@@ -162,6 +164,7 @@ export class MetadataStorage {
   }
 
   addResolver<T extends ClassType = any>(item: T) {
+    this._resolvers.add(item);
     this._store.createInstance(item);
   }
 
@@ -283,22 +286,22 @@ export class MetadataStorage {
 
   private applyFieldModifiers() {
     this._fieldModifiers.map((fm) => {
-      const f = this._allFields.find((f) => {
+      const f = this._allFields.filter((f) => {
         return (
           fm.classType === f.extensions.decoratorInfos.classType &&
           fm.key === f.extensions.decoratorInfos.key
         );
       });
-      if (f) {
+      f.map((f) => {
         fm.modifier(f);
-      }
+      });
     });
   }
 
   private applyTypesModifiers() {
     this._typeModifiers.map((tm) => {
-      const instance = this._store.getInstance(tm.classType);
-      if (instance) {
+      const isResolver = this._resolvers.has(tm.classType);
+      if (isResolver) {
         // If the class is decorated by @Resolver, apply to modifier to the fields of the class
         this._allFields.map((f) => {
           if (tm.classType === f.extensions.decoratorInfos.classType) {
@@ -306,15 +309,15 @@ export class MetadataStorage {
           }
         });
       } else {
-        const t = this._allTypes.find((t) => {
+        const t = this._allTypes.filter((t) => {
           return (
             tm.classType === t.extensions.decoratorInfos.classType &&
             tm.key === t.extensions.decoratorInfos.key
           );
         });
-        if (t) {
+        t.map((t) => {
           tm.modifier(t);
-        }
+        });
       }
     });
   }

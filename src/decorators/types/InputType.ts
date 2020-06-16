@@ -1,17 +1,22 @@
 import { InputType as T, ClassType } from "graphql-composer";
-import { MetadataStorage, TypeParams, ExtensionsType } from "../..";
+import {
+  MetadataStorage,
+  InputTypeParams,
+  ExtensionsType,
+  DecoratorHelper,
+} from "../..";
 
 export function InputType();
 export function InputType(name: string);
-export function InputType(params: TypeParams);
-export function InputType(name: string, params: TypeParams);
+export function InputType(params: InputTypeParams);
+export function InputType(name: string, params: InputTypeParams);
 export function InputType(
-  nameOrParams?: string | TypeParams,
-  params?: TypeParams,
+  nameOrParams?: string | InputTypeParams,
+  params?: InputTypeParams,
 ) {
   return (target: Function) => {
     let finalName = target.name;
-    let finalParams = {};
+    let finalParams: InputTypeParams = {};
 
     if (typeof nameOrParams === "string") {
       finalName = nameOrParams;
@@ -24,6 +29,7 @@ export function InputType(
     }
 
     const meta: ExtensionsType = {
+      ...(finalParams.extensions || {}),
       decoratorInfos: {
         key: target.name,
         kind: "input",
@@ -34,7 +40,13 @@ export function InputType(
 
     const item = T.create<any>(target as ClassType)
       .setName(finalName)
-      .setExtensions(meta);
+      .setExtensions(meta)
+      .setDirectives(
+        ...(finalParams.directives || []).map((d) =>
+          DecoratorHelper.parseDirective(d.name, d.args),
+        ),
+      )
+      .setDescription(finalParams.description);
 
     MetadataStorage.instance.addInputType(item);
   };

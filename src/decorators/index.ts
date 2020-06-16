@@ -6,6 +6,7 @@ export * from "./fields/InterfaceField";
 export * from "./meta/Description";
 export * from "./meta/Extensions";
 export * from "./meta/Directive";
+export * from "./meta/Deprecated";
 
 export * from "./resolver/Resolver";
 export * from "./resolver/queries/Query";

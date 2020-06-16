@@ -1,7 +1,10 @@
 import { ObjectType, Field, Schema } from "../../../src";
 import { ClassType, ObjectType as ComposerObjectType } from "graphql-composer";
 
+@ObjectType({ hidden: true })
 abstract class Args<ArgsType> {
+  @Field()
+  count: number;
   items: ArgsType;
 }
 
@@ -37,11 +40,15 @@ describe("Generic type", () => {
     const userArgs = schema.types[1] as ComposerObjectType;
     const generic = schema.types[2] as ComposerObjectType;
 
+    expect(schema.types).toHaveLength(3);
+
     expect(user.name).toEqual("User");
     expect(userArgs.name).toEqual("UserArgs");
     expect(generic.name).toEqual("Generic");
 
     expect(userArgs.fields[0].type).toEqual(user);
+    expect(userArgs.fields[1].type).toEqual(Number);
+
     expect(generic.fields[0].type).toEqual(userArgs);
   });
 });

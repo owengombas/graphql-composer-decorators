@@ -11,6 +11,7 @@ export function Description(description: string) {
       MetadataStorage.instance.addTypeModifier({
         classType: prototype,
         key: prototype.name,
+        fieldModifier: (f) => f.setDescription(description),
         modifier: (t) => t.setDescription(description),
       });
     } else {

@@ -4,8 +4,9 @@ import {
   ObjectType,
   InterfaceType,
 } from "graphql-composer";
+import { Params } from "./Params";
 
-export class TypeParams {
+export interface TypeParams extends Params {
   nullable?: boolean;
   required?: boolean;
   hidden?: boolean;

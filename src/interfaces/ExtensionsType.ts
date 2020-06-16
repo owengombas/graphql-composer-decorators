@@ -8,6 +8,7 @@ export interface DecoratorInfos<ParamsType = KeyValue> {
   params: ParamsType;
   index?: number;
   kind: Kind;
+  name?: string;
 }
 
 export type ExtensionsType<ParamsType = KeyValue> = {

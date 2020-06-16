@@ -5,7 +5,7 @@ import {
   ExtensionsType,
   BuildingFieldParams,
 } from "..";
-import { Field } from "graphql-composer";
+import { Field, Directive, KeyValue } from "graphql-composer";
 
 export class DecoratorHelper {
   static getAddFieldFunction(
@@ -50,6 +50,7 @@ export class DecoratorHelper {
       }
 
       const meta: ExtensionsType<ObjectFieldParams> = {
+        ...(finalParams.extensions || {}),
         decoratorInfos: {
           key,
           kind: "field",
@@ -59,7 +60,15 @@ export class DecoratorHelper {
         },
       };
 
-      const field = Field.create<any>(finalName, Boolean).setExtensions(meta);
+      const field = Field.create<any>(finalName, Boolean)
+        .setExtensions(meta)
+        .setDescription(finalParams.description)
+        .setDirectives(
+          ...(finalParams.directives || []).map((d) =>
+            this.parseDirective(d.name, d.args),
+          ),
+        )
+        .setDeprecationReason(finalParams.deprecationReason);
 
       if (descriptor) {
         field.setResolver(descriptor.value);
@@ -67,5 +76,17 @@ export class DecoratorHelper {
 
       cb(field, target, key, descriptor);
     };
+  }
+
+  static parseDirective(name: string, args: KeyValue) {
+    const dir = Directive.create(name);
+
+    if (args) {
+      Object.keys(args).map((key) => {
+        dir.addArg(key, args[key]);
+      });
+    }
+
+    return dir;
   }
 }

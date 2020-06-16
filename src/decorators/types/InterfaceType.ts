@@ -4,6 +4,7 @@ import {
   TypeParams,
   ExtensionsType,
   InterfaceTypeParams,
+  DecoratorHelper,
 } from "../..";
 
 export function InterfaceType();
@@ -40,6 +41,12 @@ export function InterfaceType(
     const item = T.create<any>(target as ClassType)
       .setName(finalName)
       .setExtensions(meta)
+      .setDescription(finalParams.description)
+      .setDirectives(
+        ...(finalParams.directives || []).map((d) =>
+          DecoratorHelper.parseDirective(d.name, d.args),
+        ),
+      )
       .setTypeResolver(finalParams.typeResolver);
 
     MetadataStorage.instance.addInterfaceType(item);

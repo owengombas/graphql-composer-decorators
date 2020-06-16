@@ -9,10 +9,17 @@ export function Extensions<ExtensionsType = KeyValue>(
     propertyKey?,
     descriptor?: TypedPropertyDescriptor<any>,
   ) => {
+    const fieldModifier = (f) =>
+      f.setExtensions({
+        ...f.extensions,
+        ...extensions,
+      });
+
     if (typeof prototype === "function") {
       MetadataStorage.instance.addTypeModifier({
         classType: prototype,
         key: prototype.name,
+        fieldModifier,
         modifier: (t) =>
           t.setExtensions({
             ...t.extensions,
@@ -23,11 +30,7 @@ export function Extensions<ExtensionsType = KeyValue>(
       MetadataStorage.instance.addFieldModifier({
         classType: prototype.constructor,
         key: propertyKey,
-        modifier: (f) =>
-          f.setExtensions({
-            ...f.extensions,
-            ...extensions,
-          }),
+        modifier: fieldModifier,
       });
     }
   };
