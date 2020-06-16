@@ -1,5 +1,5 @@
 module.exports = {
-  title: "graphql-composer",
+  title: "graphql-composer-decorators",
   description: "Create your GraphQL API using decorators!",
   lang: "en",
   base: "/graphql-composer-decorators/",
