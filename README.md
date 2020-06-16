@@ -17,7 +17,7 @@ GraphQL est revolutionizes backend development, the fact that you have to declar
 
 However, this can lead to duplication of code and therefore affect the stability of your application. Indeed, based on the DRY (Don't Repeat Yourself) principle, the fact of declaring several times the same element in a different way should be avoided, because when this element changes you have to modify several parts of code, so if only one of these parts is omitted it can cause problems in your application and the more your application grows the harder it will be to maintain it.
 
-### [Go to introduction](https://owencalvin.github.io/graphql-composer-decorators/)
+### [Go to the documentation](https://owencalvin.github.io/graphql-composer-decorators/)
 
 # graphql-composer
 The `graphql-composer-decorators` module is broken down into two modules instead of making one heavier, `graphql-composer` simply provides a compositing API which allows you to create an API using the `builder' design pattern and compositing.
