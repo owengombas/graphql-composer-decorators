@@ -31,6 +31,9 @@ Un objet acceptant plusieurs paramètres:
 | hidden | La classe ne sera pas compilé et n'apparaîtra pas dans le schema (utile pour les type génériques), une classe abstraite est en principe `hidden` | `boolean` |
 | nullable | Tout les champs du type serons nullable | `boolean` |
 | required | Tout les champs du type seront requis | `boolean` |
+| description | La description du type | `string` |
+| extensions | Les extensions (métadonnées) du type | `any` |
+| directives | Les directives du type | `{name: string, args: KeyValue}[]` |
 
 # Utilisation avec `@Args` (et `@Arg`)
 Il y'a deux façon d'utiliser votre type comme argument:

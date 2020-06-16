@@ -17,6 +17,7 @@ import {
   GQLAnyType,
   N,
   R,
+  EnumType,
 } from "graphql-composer";
 import {
   Kind,
@@ -109,6 +110,10 @@ export class MetadataStorage {
 
   get built() {
     return this._built;
+  }
+
+  get store() {
+    return this._store;
   }
 
   addObjectType(item: ObjectType<any, any>) {
@@ -248,11 +253,12 @@ export class MetadataStorage {
       this._built.push(this._subscriptionType);
     }
 
-    this._built = [...this.built, ...this._allTypes].filter((t) => {
+    this._built = [...this.built, ...this._allTypes].filter((t, index) => {
       if (t.extensions) {
         return !t.extensions?.decoratorInfos?.params?.hidden;
       }
-      return true;
+      // Do not duplicate the type
+      return this._built.indexOf(t) === index;
     });
 
     return this._built;
@@ -471,6 +477,10 @@ export class MetadataStorage {
         typeRef.setTypes(...newTypes);
         this._built.push(typeRef);
       }
+    }
+
+    if (typeRef instanceof EnumType) {
+      this._built.push(typeRef);
     }
 
     const t = TypeParser.parse(typeRef as any);

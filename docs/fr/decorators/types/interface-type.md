@@ -32,6 +32,9 @@ Un objet acceptant plusieurs paramètres:
 | nullable | Tout les champs du type serons nullable | `boolean` |
 | required | Tout les champs du type seront requis | `boolean` |
 | typeResolver | Fonction déterminant la valeur de `__typename` | `GraphQLTypeResolver` |
+| description | La description du type | `string` |
+| extensions | Les extensions (métadonnées) du type | `any` |
+| directives | Les directives du type | `{name: string, args: KeyValue}[]` |
 
 # La fonction de `TypeResolver` (`__typename`)
 Par défaut une fonction fonctionnant avec tout les types est écrite par `graphql-composer`, vous n'avez donc, pour de nombreux cas, pas besoin de donner une valeur à `params.typeResolver`.

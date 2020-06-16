@@ -1,15 +1,32 @@
-import { ResolveFunction, GQLObjectType, Field } from "graphql-composer";
+import {
+  GQLObjectType,
+  Field,
+  ResolveFunction,
+  ClassType,
+} from "graphql-composer";
 import { MetadataStorage } from "../../..";
+import { Middleware } from "../../../classes/Middleware";
 
-export function Middlewares(...middlewares: ResolveFunction[]) {
+export function Middlewares(
+  ...middlewares: (typeof Middleware | ResolveFunction)[]
+) {
   return (
     prototype: Function | Object,
     propertyKey?,
     descriptor?: TypedPropertyDescriptor<any>,
   ) => {
+    const mws = middlewares.map((mw) => {
+      if (Object.getPrototypeOf(mw) === Middleware) {
+        const instance: Middleware = new (mw as ClassType)();
+        return instance.resolve.bind(instance);
+      } else {
+        return mw;
+      }
+    });
+
     const fieldModifier = (f) => {
       if (f instanceof Field) {
-        f.addMiddlewares(...middlewares);
+        f.addMiddlewares(...mws);
       }
     };
 
@@ -20,9 +37,7 @@ export function Middlewares(...middlewares: ResolveFunction[]) {
         fieldModifier: fieldModifier,
         modifier: (t) => {
           if (t instanceof GQLObjectType) {
-            t.transformFields((f) => {
-              f.addMiddlewares(...middlewares);
-            });
+            t.transformFields(fieldModifier);
           }
         },
       });

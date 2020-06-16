@@ -7,6 +7,7 @@ import {
   Schema,
   Subscription,
   Middlewares,
+  Middleware,
 } from "../../src";
 import { ApolloServer, gql } from "apollo-server-express";
 import ApolloClient from "apollo-client";
@@ -66,6 +67,17 @@ class Response {
   }
 }
 
+class MW extends Middleware {
+  binded = "binded";
+
+  async resolve(args, ctx, next) {
+    expect(args.notif).toBe("notif");
+    expect(ctx.source).toEqual({ payload: "mypayload" });
+    args.notif = "NOTIFICATION";
+    await next();
+  }
+}
+
 @Resolver()
 class R {
   binded = "binded";
@@ -83,12 +95,7 @@ class R {
       return pubsub.asyncIterator("NOTIFICATION");
     },
   })
-  @Middlewares(async (args, ctx, next) => {
-    expect(args.notif).toBe("notif");
-    expect(ctx.source).toEqual({ payload: "mypayload" });
-    args.notif = "NOTIFICATION";
-    await next();
-  })
+  @Middlewares(MW)
   notification(@Arg("notif") notif: string, ctx: Context): Response {
     expect(notif).toBe("NOTIFICATION");
     return new Response(ctx.source.payload);

@@ -31,7 +31,10 @@ Un objet acceptant plusieurs paramètres:
 | hidden | La classe ne sera pas compilé et n'apparaîtra pas dans le schema (utile pour les type génériques), une classe abstraite est en principe `hidden` | `boolean` |
 | nullable | Tout les champs du type serons nullable | `boolean` |
 | required | Tout les champs du type seront requis | `boolean` |
-| implements | Implémente une interface (GraphQL) | `(ClassType | InterfaceType)[]`  (*Une class* ou une *interface déclarer avec `graphql-composer`*)[] |
+| implements | Implémente une interface (GraphQL) | `(ClassType | InterfaceType)[]`  (*Une class* ou une *interface déclarée avec `graphql-composer`*)[] |
+| description | La description du type | `string` |
+| extensions | Les extensions (métadonnées) du type | `any` |
+| directives | Les directives du type | `{name: string, args: KeyValue}[]` |
 
 # `@ObjectField`
 Le décorateur `@ObjectField` va indiquer les paramètre du champs seulement pour `@ObjectType`.  

@@ -1,4 +1,4 @@
-import { ClassType } from "graphql-composer";
+import { ClassType, InstanceOf } from "graphql-composer";
 
 export class DIStore<TKeyType = any, TInstanceType = any> {
   private static _global: DIStore;
@@ -41,9 +41,9 @@ export class DIStore<TKeyType = any, TInstanceType = any> {
   }
 
   getInstance<Type extends TInstanceType>(
-    idOrInstance: any | Type,
-  ): TInstanceType {
-    const found = this._instances.get(idOrInstance);
-    return found;
+    idOrInstance: ClassType<Type> | any,
+  ): Type {
+    const found = this._instances.get(idOrInstance as any);
+    return found as any;
   }
 }
