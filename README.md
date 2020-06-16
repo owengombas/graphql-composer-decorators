@@ -11,7 +11,6 @@
   <br/>
 </p>
 
-
 # graphql-composer-decorators
 GraphQL comes to revolutionize backend development, the fact that you have to declare types is something very useful, however it can lead to code duplication and therefore affect the stability of your application. Indeed, based on the DRY (Don't Repeat Yourself) principle, the fact of declaring several times the same element in a different way should be avoided, because when this element changes it is necessary to modify several parts of code, so if only one of these parts is omitted it can cause problems in your application and the more it grows the harder it will be to maintain it.
 
