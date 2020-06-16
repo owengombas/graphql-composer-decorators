@@ -50,7 +50,7 @@ class User {
   // or shorter with @Field(type => [R(String)])
   username: string[];
 
-  @Field(type => Null([Required(String)])
+  @Field(type => Nullable([Required(String)])
   // or shorter with @Field(type => N([R(String)]))
   email: string[];
 }
