@@ -4,7 +4,7 @@ GraphQL est vient révolutionner le développement backend, le fait qu'il faille
 Cependant cela peut entraîner une duplication du code et donc nuire à la stabilité de votre application. En effet en se basant sur le principe DRY (Don't Repeat Yourself) le fait de déclarer plusieurs fois un même élément de façon différente devrait être évité, car lorsque cet élément change il faut donc modifier plusieurs parties de code, ainsi si une seule de ces parties est omise cela peut engendrer des problèmes dans votre application et plus votre application grandie plus il sera dure de maintenir celle-ci.
 
 ## Mais TypeGraphQL existe déjà ?
-`graphql-composer-decorators` diffère quelque peu de TypeGraphQL les différences sont détaillées [ici](/typegraphql-comparison).
+`graphql-composer-decorators` diffère quelque peu de TypeGraphQL les différences sont détaillées [ici](/intro/typegraphql-comparison).
 
 ## Fonctionnement des décorateurs
 
