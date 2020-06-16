@@ -25,7 +25,7 @@ abstract class GenericResponse<Type> {
 }
 ```
 
-### Déclaration du créateur de type:
+### Déclaration du créateur de type
 Vous allez devoir utiliser la **valeur** de la class passé en paramètre pour le décorateur `@Field` et le **type** passé par paramètre générique à la fonction pour déclarer le type du champ de la class.
 ```ts
 import { ClassType } from "graphql-composer";

@@ -5,7 +5,7 @@ GraphQL ne traite pas de stratégie spécifique de mise en œuvre des directives
 Vous pouvez assigner les `directives` grâce aux paramètres via tous les décorateurs d'élément GraphQL (`@ObjectType`, `@InputType`, `@InterfaceType` `@Arg`, `@Field`, ...). Cependant si vous voulez assigner les `directives` de façon commune pour tous les types, ou tout les champs, il est plus pratique de passer par `@Directive`.  
 
 ## Utilisation de `@Directive`
-Ceci se fait simplement en passant un objet au décorateur `@Extensions`
+Ceci se fait simplement en passant un name ainsi que des arguments (optionel) au décorateur `@Directive`
 > Si vous voulez mettre plusieurs directives sur un élément, vous devrez utiliser plusieurs fois le décorateur
 ```ts
 @ObjectType()
@@ -50,4 +50,3 @@ class User {
   username: string;
 }
 ```
-

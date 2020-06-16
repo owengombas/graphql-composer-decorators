@@ -1,6 +1,6 @@
 module.exports = {
   title: "graphql-composer",
-  description: "",
+  description: "Create your GraphQL API using decorators!",
   lang: "en",
   locales: {
     "/": {
@@ -9,14 +9,9 @@ module.exports = {
     },
     "/fr/": {
       lang: "fr",
-      title: "graphql-composer-decorators",
-      description: ""
+      description: "Créez votre API GraphQL avec des décorateurs !"
     },
   },
-  plugins: [
-    [
-    ]
-  ],
   head: [
     ['link', { rel: "apple-touch-icon", sizes: "180x180", href: "/favicon/apple-touch-icon.png"}],
     ['link', { rel: "icon", type: "image/png", sizes: "96x96", href: "/favicon/favicon-96x96.png"}],
@@ -35,65 +30,110 @@ module.exports = {
     docsDir: "docs",
     editLinks: true,
     locales: {
-      "/": {},
-      "/fr/": {
-        ariaLabel: "Langue",
-        editLinkText: "Modifier ce fichier sur GitHub",
-        lang: "fr",
+      "/": {
+        ariaLabel: "Languages",
+        editLinkText: "Edit this file on GitHub",
+        lang: "en-US",
         title: "graphql-composer-decorators",
         description: "Create your GraphQL API using decorators!",
         sidebar: [
           {
-            title: "Decorateurs",
-            path: "/fr/decorators/intro/introduction",
             collapsable: false,
-            sidebarDepth: 4,
+            title: "Introduction",
+            path: "/intro/introduction",
             children: [
-              {
-                collapsable: false,
-                title: "Introduction",
-                path: "/fr/decorators/intro/introduction",
-                children: [
-                  "/fr/decorators/intro/introduction",
-                  "/fr/decorators/intro/installation",
-                  "/fr/decorators/intro/getting-started",
-                  "/fr/decorators/intro/typegraphql-comparison"
-                ]
-              },
-              {
-                collapsable: false,
-                title: "Types",
-                path: "/fr/decorators/types/object-type",
-                children: [
-                  "/fr/decorators/types/object-type",
-                  "/fr/decorators/types/input-type",
-                  "/fr/decorators/types/interface-type",
-                  "/fr/decorators/types/union-type",
-                  "/fr/decorators/types/enum-type",
-                  "/fr/decorators/types/generic-type",
-                  "/fr/decorators/types/field",
-                ]
-              },
-              {
-                collapsable: false,
-                title: "Queries",
-                path: "/fr/decorators/queries/resolver",
-                children: [
-                  "/fr/decorators/queries/resolver",
-                  "/fr/decorators/queries/middlewares",
-                ]
-              },
-              {
-                collapsable: false,
-                title: "Meta",
-                path: "/fr/decorators/queries/description",
-                children: [
-                  "/fr/decorators/meta/description",
-                  "/fr/decorators/meta/extensions",
-                  "/fr/decorators/meta/deprecated",
-                  "/fr/decorators/meta/directives",
-                ]
-              }
+              "/intro/introduction",
+              "/intro/installation",
+              "/intro/getting-started",
+              "/intro/typegraphql-comparison"
+            ]
+          },
+          {
+            collapsable: false,
+            title: "Types",
+            path: "/types/object-type",
+            children: [
+              "/types/object-type",
+              "/types/input-type",
+              "/types/interface-type",
+              "/types/union-type",
+              "/types/enum-type",
+              "/types/generic-type",
+              "/types/field",
+            ]
+          },
+          {
+            collapsable: false,
+            title: "Queries",
+            path: "/queries/resolver",
+            children: [
+              "/queries/resolver",
+              "/queries/middlewares",
+            ]
+          },
+          {
+            collapsable: false,
+            title: "Meta",
+            path: "/queries/description",
+            children: [
+              "/meta/description",
+              "/meta/extensions",
+              "/meta/deprecated",
+              "/meta/directives",
+            ]
+          }
+        ]
+      },
+      "/fr/": {
+        ariaLabel: "Langue",
+        editLinkText: "Modifier ce fichier sur GitHub",
+        lang: "fr-FR",
+        title: "graphql-composer-decorators",
+        description: "Créez votre API GraphQL avec des décorateurs !",
+        sidebar: [
+          {
+            collapsable: false,
+            title: "Introduction",
+            path: "/fr/intro/introduction",
+            children: [
+              "/fr/intro/introduction",
+              "/fr/intro/installation",
+              "/fr/intro/getting-started",
+              "/fr/intro/typegraphql-comparison"
+            ]
+          },
+          {
+            collapsable: false,
+            title: "Types",
+            path: "/fr/types/object-type",
+            children: [
+              "/fr/types/object-type",
+              "/fr/types/input-type",
+              "/fr/types/interface-type",
+              "/fr/types/union-type",
+              "/fr/types/enum-type",
+              "/fr/types/generic-type",
+              "/fr/types/field",
+            ]
+          },
+          {
+            collapsable: false,
+            title: "Queries",
+            path: "/fr/queries/resolver",
+            children: [
+              "/fr/queries/resolver",
+              "/fr/queries/middlewares",
+            ]
+          },
+          {
+            collapsable: false,
+            title: "Meta",
+            path: "/fr/queries/description",
+            children: [
+              "/fr/meta/description",
+              "/fr/meta/extensions",
+              "/fr/meta/deprecated",
+              "/fr/meta/directives",
             ]
           }
         ]

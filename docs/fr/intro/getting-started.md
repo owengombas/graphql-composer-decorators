@@ -26,7 +26,7 @@ const schema = Schema
 ### `setConfig`
 Vous permet de configurer votre schéma.
 | Propriété | Description | Type
-
+|-|-|-|
 | requiredByDefault | Si `true`, les types des champs seront NonNullable par défaut | `boolean` |
 | arrayRequired | Si `true`, les types à l'intérieur des tableaux seront NonNullable par défaut (si `undefined`, prend la valeur de `requiredByDefault`) | `boolean` |
 ```ts

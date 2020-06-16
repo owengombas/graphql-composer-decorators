@@ -1,5 +1,5 @@
-# Différences entre `graphql-composer-decorators` et `typegraphql`
-Ce framework est basé sur le même principe que `typegraphql`, cependant il vient corriger et changer certains modes de fonctionnement qui peuvent être parfois être restrictifs.
+# Différences avec TypeGraphQL
+Ce framework est basé sur le même principe que TypeGraphQL, cependant il vient corriger et changer certains modes de fonctionnement qui peuvent être parfois être restrictifs.
 
 ## API
 Le principal changement se trouve dans le fait que ce module est séparé en deux modules distincts au lieu d'un seul plus lourd, ce qui permet également de vous fournir une API de composition nommée `graphql-composer`.  
@@ -32,7 +32,7 @@ type Query {
 ```
 
 ## `Nullable` ou `Requis`
-La définition des types nullable et requis est très restrictive avec `typegraphql`, ce qui a été réglé ici grâce à deux fonctions: `Nullable(type: Type)` (`N(type: Type)`) et `Required(type: Type)` (`R(type: Type)`).
+La définition des types nullable et requis est très restrictive avec TypeGraphQL, ce qui a été réglé ici grâce à deux fonctions: `Nullable(type: Type)` (`N(type: Type)`) et `Required(type: Type)` (`R(type: Type)`).
 Prenons l'exemple de la déclaration d'un tableau avec un contenu interne requis (c'est en étant explicite, vous pouvez évidemment préciser si vos types sont nullable ou requis par défaut):
 ```ts
 @InputType()
@@ -46,7 +46,7 @@ class User {
   email?: string[];
 }
 ```
-Il n'est pas possible de faire ceci avec `typegraphql` pour le moment, car le paramètre nullable est appliqué à l'ensemble de `@Field`
+Il n'est pas possible de faire ceci avec TypeGraphQL pour le moment, car le paramètre nullable est appliqué à l'ensemble de `@Field`
 
 ## Les subscriptions
 Le décorateur de `@Subscription` fonctionne de manière différente, n'étant pas satisfait du fait d'imposer `grahphql-subcriptions` comme gestionnaire de subscriptions (le fonctionnement des subscription n'est donc pas très libre pour le développeur) et de ne pas laisser le choix au développeur, j'ai opté pour une manière un peu différente.
@@ -74,7 +74,7 @@ const pubsub = new PubSub();
 }
 ```
 
-Avec `typegraphql`:
+Avec TypeGraphQL:
 ```ts
 @Resolver()
 class Resolver {
@@ -92,7 +92,7 @@ class Resolver {
 ```
 
 ## Le context
-Les arguments spécifiques au context GraphQL (infos, source, root, etc...) sont injectés via des décorateurs avec `typegraphql` (`@Root`, `@Source`, `@Infos`, ...) ce qui peut alourdir énormément la déclaration de vos méthodes. Ici nous avons opté l'injection d'un objet contenant l'ensemble de ces informations après vos arguments:
+Les arguments spécifiques au context GraphQL (infos, source, root, etc...) sont injectés via des décorateurs avec TypeGraphQL (`@Root`, `@Source`, `@Infos`, ...) ce qui peut alourdir énormément la déclaration de vos méthodes. Ici nous avons opté l'injection d'un objet contenant l'ensemble de ces informations après vos arguments:
 ```ts
 import { Context } from "graphql-composer";
 

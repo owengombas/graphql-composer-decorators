@@ -1,9 +1,9 @@
 # Resolver
 Un resolver est une classe qui accueille des **query**, des **mutation** ou des **subscription**.
 
-## @Query et @Mutation
+## `@Query` et `@Mutation`
 Ces deux décorateurs fonctionnent de la même façon, excepté que l'un déclarer un champ dans votre type `Query` et l'autre dans le type `Mutation`.
-Ce sont au final des décorateurs `@Field` qui déclare un champ dans leur type respectif (`Query` ou `Mutation`), il accepte alors les mêmes paramètres que `@Field`. (détails [ici](/fr/types/field))
+Ce sont au final des décorateurs `@Field` qui déclare un champ dans leur type respectif (`type Query` ou `type Mutation`), il accepte alors les mêmes paramètres que `@Field` ([détails](/fr/types/field)).
 
 ```ts
 @ObjectType()

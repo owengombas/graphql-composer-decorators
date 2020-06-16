@@ -5,12 +5,48 @@
   "main": "build/Main.js",
   "author": "Owen Calvin",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/owencalvin/graphql-composer-decorators"
+  },
+  "bugs": {
+    "url": "https://github.com/owencalvin/graphql-composer-decorators/issues"
+  },
+  "contributors": [
+    {
+      "name": "Owen Calvin",
+      "url": "https://github.com/owencalvin"
+    }
+  ],
+  "keywords": [
+    "typescript",
+    "api",
+    "graphql",
+    "typed",
+    "type",
+    "query",
+    "mutation",
+    "subscription",
+    "interface",
+    "class",
+    "library",
+    "framework",
+    "tool",
+    "creation",
+    "rest",
+    "websocket",
+    "koa",
+    "controllers",
+    "decorators",
+    "middlewares"
+  ],
   "scripts": {
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --fix --ext .ts",
     "test": "./node_modules/.bin/jest --detectOpenHandles --runInBand",
     "build": "rm -rf build && tsc && cp ./package.json ./build/package.json",
-    "publish:npm": "npm run build && cd build && npm publish && cd .."
+    "publish:npm": "npm run build && cd build && npm publish && cd ..",
+    "docs:build": "vuepress build"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",

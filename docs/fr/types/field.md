@@ -143,5 +143,3 @@ class User {
   username: string[];
 }
 ```
-
-
