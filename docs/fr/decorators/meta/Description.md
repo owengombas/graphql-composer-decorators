@@ -1,7 +1,7 @@
 # Description
-Vous pouvez assigner une description grâce aux paramètres via tout les décorateurs d'élément GraphQL (`@ObjectType`, `@InputType`, `@InterfaceType` `@Arg`, `@Field`, ...). Cependant si vous voulez ajouter une description commune pour tous les types, ou tous les champs, il est plus pratique de passer par `@Description`.  
+Vous pouvez assigner une description grâce aux paramètres via tous les décorateurs d'élément GraphQL (`@ObjectType`, `@InputType`, `@InterfaceType` `@Arg`, `@Field`, ...). Cependant si vous voulez ajouter une description commune pour tous les types, ou tous les champs, il est plus pratique de passer par `@Description`.  
 
-# Description GraphQL
+## Description GraphQL
 Vos éléments GraphQL (type, input, interface, champs, etc...) peuvent avoir une description:
 ```graphql
 ""My User type""
@@ -11,7 +11,7 @@ type User {
 }
 ```
 
-# Utilisation de `@Description`
+## Utilisation de `@Description`
 `type User` et `input UserInput` auront la même description:
 ```ts
 @Description("An user")
@@ -39,8 +39,8 @@ input UserInput {
 }
 ```
 
-# Utilisation de description de façon distincte
-Ceci se fait via les paramètre des décorateurs d'éléments
+## Utilisation de description de façon distincte
+Ceci se fait via les paramètres des décorateurs d'éléments
 ```ts
 @ObjectType({ description: "User object" })
 @InputType("UserInput", { description: "User input" })

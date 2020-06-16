@@ -1,6 +1,6 @@
-# Les type génériques
-Il sera certainement très utile dans votre application d'utiliser des type génériques.
-Prenons l'exemple d'une réponse de liste à une requête dans laquelle vous envoyer tout les items via une liste du type de l'item (`items`) ainsi que la taille de la liste (`count`).  
+# Les types génériques
+Il sera certainement très utile dans votre application d'utiliser des types génériques.
+Prenons l'exemple d'une réponse de liste à une requête dans laquelle vous envoyer tous les items via une liste du type de l'item (`items`) ainsi que la taille de la liste (`count`).  
 *Sous forme de class:*
 ```ts
 class Response<Type> {
@@ -12,9 +12,10 @@ class Response<Type> {
 Pour faire ceci avec les décorateurs nous devons utiliser une méthode peu commune: une fonction retournant une class !
 
 ## Processus de création d'un type générique
-Déclarons d'abord notre classe de base:
-Uniquement le champs number est décoré car les items n'ont pas de type déterminé à cet instant.
-> La classe est en hidden car elle sert de modèle pour les types qui vont être créer à partir de celle-ci.
+
+### Déclaration de la class de base
+Uniquement le champ number est décoré, car les items n'ont pas de type déterminé à cet instant.
+> La classe est en hidden, car elle sert de modèle pour les types qui vont être créés à partir de celle-ci.  
 ```ts
 @ObjectType({ hidden: true })
 abstract class GenericResponse<Type> {
@@ -23,8 +24,9 @@ abstract class GenericResponse<Type> {
   items: Type[];
 }
 ```
-Créer notre créateur de type:
-Vous allez devoir utiliser la **valeur** de la class passé en paramètre pour le décorateur `@Field` et le **type** passé par paramètre générique à la function pour déclarer le type du champ de la class.
+
+### Déclaration du créateur de type:
+Vous allez devoir utiliser la **valeur** de la class passé en paramètre pour le décorateur `@Field` et le **type** passé par paramètre générique à la fonction pour déclarer le type du champ de la class.
 ```ts
 import { ClassType } from "graphql-composer";
 
@@ -38,6 +40,7 @@ function createResponse<ItemsType extends ClassType>(itemsType: ItemsType) {
   return Response as ClassType;
 }
 ```
+
 Enfin pour utiliser notre type générique:
 ```ts
 @ObjectType()

@@ -1,9 +1,9 @@
 # Resolver
 Un resolver est une classe qui accueille des **query**, des **mutation** ou des **subscription**.
 
-# @Query et @Mutation
-Ces deux décorateurs fonctionnent de la même façon, excepté que l'un déclarer un champs dans votre type `Query` et l'autre dans le type `Mutation`.
-Ce sont au final des décorateurs `@Field` qui déclare un champs dans leur type respectif (`Query` ou `Mutation`), il accepte alors les même paramètre que `@Field`. (détails [ici](/fr/types/field))
+## @Query et @Mutation
+Ces deux décorateurs fonctionnent de la même façon, excepté que l'un déclarer un champ dans votre type `Query` et l'autre dans le type `Mutation`.
+Ce sont au final des décorateurs `@Field` qui déclare un champ dans leur type respectif (`Query` ou `Mutation`), il accepte alors les mêmes paramètres que `@Field`. (détails [ici](/fr/types/field))
 
 ```ts
 @ObjectType()
@@ -35,8 +35,8 @@ type Mutation {
 }
 ```
 
-# Subscriptions
-C'est un peu différent pour une subscription, celle-ci fonctionne également comme `@Query` et `@Mutation` et est ajouté au type `Subscription`. Cependant il lui faut indique une fonction subscribe dans ses paramètres.  
+## Subscriptions
+C'est un peu différent pour une subscription, celle-ci fonctionne également comme `@Query` et `@Mutation`. Les subscriptions seront ajouté au type GraphQL `Subscription`. Cependant il lui faut indique une fonction subscribe dans ses paramètres.  
 
 Vous pouvez donc choisir la librairie souhaitée pour vos subscriptions, voici un exemple avec `graphql-subscriptions`.  
 
@@ -74,7 +74,7 @@ class Resolver {
 }
 ```
 
-Pour les personne familière de la façon de faire avec la dépendance `graphql`, cela donnerait:
+Pour les personnes familières de la façon de faire avec le module `graphql`, cela donnerait:
 ```js
 const resolvers = {
   Subscription: {
@@ -93,20 +93,20 @@ type Subscription {
 }
 ```
 
-# L'objet `Context`
+## L'objet `Context`
 L'objet `Context<BodyType = any, SourceType = any>` est injecté après vos arguments dans une méthode, celui-ci contient toutes les informations de la requête:
 | Propriété | Type | Description
 |-|-|-|
 | body | `BodyType (any)` | La réponse envoyée au client |
-| field | `Field` | Contient la référence à l'objet `Field` de `graphql-composer`, vous donnant accès à toute les informations du champs |
+| field | `Field` | Contiens la référence à l'objet `Field` de `graphql-composer`, vous donnant accès à toutes les informations du champ |
 | context | `any` | Le context GraphQL |
 | infos | `GraphQLResolveInfo` | L'objet infos de GraphQL |
 | source | `SourceType (any)` | L'objet source GraphQL, **la payload d'une subscription** |
-| rawArgs | `any` | Les arguments non converti en instance de class, les arguments tels quels |
+| rawArgs | `any` | Les arguments non convertis en instance de class, les arguments tels quels |
 
-# Renvoyer un résultat
+## Renvoyer un résultat
 Vous pouvez renvoyer un résultat de deux façons différentes:
-- En utilisant `return` (Peut être contraignant lorsque vous utiliser les middlewares avec la fonction `next`)
+- En utilisant `return` (peut être contraignant lorsque vous utiliser les middlewares avec la fonction `next`)
 - En assignant `Context.body` à une valeur
 
 ```ts

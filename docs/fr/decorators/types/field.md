@@ -1,7 +1,7 @@
 # Field
 
 ## `@Field`
-Ce décorateur décrit un champs pour tous les types GraphQL (`interface`, `input`, ou `type`).
+Ce décorateur décrit un champ pour tous les types GraphQL (`interface`, `input`, ou `type`).
 ```ts
 @ObjectType()
 @InputType("InputInterface")
@@ -27,7 +27,7 @@ input UserInput {
 ```
 
 ## `@ObjectField`
-Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champs de `@ObjectType`.  
+Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champ de `@ObjectType`.  
 Son fonctionnement est détaillé sur la [page dédiée au type ObjectType](/fr/types/object-type#objectfield).
 ```ts
 @ObjectType()
@@ -52,7 +52,7 @@ input UserInput {
 ```
 
 ## `@InterfaceField`
-Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champs de `@InterfaceType`.  
+Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champ de `@InterfaceType`.  
 Son fonctionnement est détaillé sur la [page dédiée au type InterfaceType](/fr/types/interface-type#interfacefield).
 ```ts
 @ObjectType()
@@ -77,7 +77,7 @@ input UserInput {
 ```
 
 ## `@InputField`
-Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champs de `@InputType`.  
+Fonctionne exactement comme `@Field` excepté qu'il paramètre seulement le champ de `@InputType`.  
 Son fonctionnement est détaillé sur la [page dédiée au type InputType](/fr/types/input-type#inputfield).
 ```ts
 @ObjectType()
@@ -101,8 +101,8 @@ input UserInput {
 }
 ```
 
-# Paramètres de field
-Les décorateur de nature "field" possède tous les mêmes signatures:
+## Paramètres de field
+Les décorateurs de nature "field" possèdent toutes les mêmes signatures:
 - `@Field`
 - `@ObjectField`
 - `@InputField`
@@ -111,8 +111,8 @@ Les décorateur de nature "field" possède tous les mêmes signatures:
 - `@Mutation`
 - `@Subscription` (`params.subscribe` requis)
 
-## `name`
-Vous pouvez changer le nom du champs GraphQL grâce à ce paramètre.
+### `name`
+Vous pouvez changer le nom du champ GraphQL grâce à ce paramètre.
 ```ts
 @ObjectType()
 class User {
@@ -127,14 +127,14 @@ type User {
 }
 ```
 
-## `type`
-Ce paramètre palis aux limitations de TypeScript.  
+### `type`
+Ce paramètre pâlit aux limitations de TypeScript.  
 Il est nécessaire quand le type ne peut être inféré comme avec:
-- Des dépendance circulaire (A dépend de B et B dépend de A)
+- Des dépendances circulaires (A dépend de B et B dépend de A)
 - Des tableaux ([détails](/fr/#tableau))
 - Des types génériques ([détails](#types-generiques))
-- Des types qui diffères du type inféré (comme pour les [enum](/fr/types/enum-type) ou [union](/fr/types/union-type))
-- Pour un champs nullable ou requis
+- Des types qui diffèrent du type inféré (comme pour les [enum](/fr/types/enum-type) ou [union](/fr/types/union-type))
+- Pour un champ nullable ou requis
 
 ```ts
 @ObjectType()

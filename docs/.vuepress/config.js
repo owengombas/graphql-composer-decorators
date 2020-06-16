@@ -9,7 +9,7 @@ module.exports = {
     },
     "/fr/": {
       lang: "fr",
-      title: "graphql-composer",
+      title: "graphql-composer-decorators",
       description: ""
     },
   },
@@ -35,6 +35,69 @@ module.exports = {
     docsDir: "docs",
     editLinks: true,
     locales: {
+      "/": {},
+      "/fr/": {
+        ariaLabel: "Langue",
+        editLinkText: "Modifier ce fichier sur GitHub",
+        lang: "fr",
+        title: "graphql-composer-decorators",
+        description: "Create your GraphQL API using decorators!",
+        sidebar: [
+          {
+            title: "Decorateurs",
+            path: "/fr/decorators/intro/introduction",
+            collapsable: false,
+            sidebarDepth: 4,
+            children: [
+              {
+                collapsable: false,
+                title: "Introduction",
+                path: "/fr/decorators/intro/introduction",
+                children: [
+                  "/fr/decorators/intro/introduction",
+                  "/fr/decorators/intro/installation",
+                  "/fr/decorators/intro/getting-started",
+                  "/fr/decorators/intro/typegraphql-comparison"
+                ]
+              },
+              {
+                collapsable: false,
+                title: "Types",
+                path: "/fr/decorators/types/object-type",
+                children: [
+                  "/fr/decorators/types/object-type",
+                  "/fr/decorators/types/input-type",
+                  "/fr/decorators/types/interface-type",
+                  "/fr/decorators/types/union-type",
+                  "/fr/decorators/types/enum-type",
+                  "/fr/decorators/types/generic-type",
+                  "/fr/decorators/types/field",
+                ]
+              },
+              {
+                collapsable: false,
+                title: "Queries",
+                path: "/fr/decorators/queries/resolver",
+                children: [
+                  "/fr/decorators/queries/resolver",
+                  "/fr/decorators/queries/middlewares",
+                ]
+              },
+              {
+                collapsable: false,
+                title: "Meta",
+                path: "/fr/decorators/queries/description",
+                children: [
+                  "/fr/decorators/meta/description",
+                  "/fr/decorators/meta/extensions",
+                  "/fr/decorators/meta/deprecated",
+                  "/fr/decorators/meta/directives",
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   }
 }

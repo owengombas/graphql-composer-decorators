@@ -18,27 +18,73 @@ input User {
 }
 ```
 
-# Paramètres
+## Paramètres
 `@InputType` a plusieurs signatures disponibles permettant de paramétrer votre objet:
 
-## `name`
+### `name`
 Indique le nom du type compilé en SDL.
 
-## `params`
+### `params`
 Un objet acceptant plusieurs paramètres:
-| | description | type |
+| Propriété | description | type |
 |-|-|-|
-| hidden | La classe ne sera pas compilé et n'apparaîtra pas dans le schema (utile pour les type génériques), une classe abstraite est en principe `hidden` | `boolean` |
-| nullable | Tout les champs du type serons nullable | `boolean` |
-| required | Tout les champs du type seront requis | `boolean` |
+| hidden | La classe ne sera pas compilée et n'apparaîtra pas dans le schéma (utile pour les types génériques), une classe abstraite est en principe `hidden` | `boolean` |
+| nullable | Tous les champs du type seront nullable | `boolean` |
+| required | Tous les champs du type seront requis | `boolean` |
 | description | La description du type | `string` |
 | extensions | Les extensions (métadonnées) du type | `any` |
 | directives | Les directives du type | `{name: string, args: KeyValue}[]` |
+| extends | Appliquer l'héritage de façon forcé | `(ClassType | ObjectType | InterfaceType | InputType)[]` (*Une class* ou *un type déclaré avec `graphql-composer`*)[] |
 
-# Utilisation avec `@Args` (et `@Arg`)
-Il y'a deux façon d'utiliser votre type comme argument:
-## Avec `@Arg`
-Fonctionne de la même façon avec tout les types
+## `@InputField`
+Le décorateur `@InputField` va indiquer les paramètres du champ seulement pour `@InputType`.  
+
+Ceci est utile lorsque vous utiliser une class en tant que que plusieurs types GraphQL (`type`, `input` ou/et `interface`), en la décorant simultanément de `@ObjectType` et `@InputType` par exemple.  
+
+Car `@Field` paramètre le champ pour tous les types GraphQL dont la class est décorée.
+> `@InputField` override les paramètres de `@Field`.
+```ts
+@ObjectType()
+@InputType("UserInput")
+class User {
+  @Field(type => R(String))
+  @ObjectField()
+  username: string;
+
+  @InputField(type => R(String))
+  @ObjectField()
+  name: string;
+
+  @Field()
+  email: string;
+
+  @InputField()
+  password: string;
+}
+```
+
+Donnera en SDL:
+```graphql
+type User {
+  username: String;
+  name: String;
+  email: String;
+}
+
+input UserInput {
+  username: String!;
+  name: String!;
+  email: String;
+  password: String;
+}
+```
+
+
+## Utilisation avec `@Args` (et `@Arg`)
+Il y'a deux façons d'utiliser votre type comme argument:
+
+### Avec `@Arg`
+Fonctionne de la même façon avec tous les types
 ```ts
 @Resolver()
 class Resolver {
@@ -59,8 +105,9 @@ input Query {
   user(user: User): Boolean
 }
 ```
-## Avec `@Args`
-Il est également très utile de pouvoir utiliser une classe pour déclarer tout les arguments d'un coup (poser les argument à plat) avec `@Args`.
+
+### Avec `@Args`
+Il est également très utile de pouvoir utiliser une classe pour déclarer tout les arguments d'un coup (poser les arguments à plat) avec `@Args`.
 > Fonctionne uniquement avec les `InputType`
 ```ts
 @Resolver()

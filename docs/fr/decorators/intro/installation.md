@@ -8,7 +8,7 @@ Ou `yarn`:
 yarn add graphql-composer-decorators
 ```
 
-# tsconfig.json
+## tsconfig.json
 Créer dans votre répertoire racine un fichier `tsconfig` qui devrait contenir ceci:
 > `experimentalDecorators` et `emitDecoratorMetadata` doivent forcément être à `true`.  
 > Si vous vous demander pourquoi les "experimental" Decorators, la documentation de TypeScript l'explique [ici](https://www.typescriptlang.org/docs/handbook/decorators.html) 

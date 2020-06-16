@@ -1,5 +1,6 @@
 # `ObjectType`
 **Un `ObjectType` correspond à la déclaration: `type` avec GraphQL (en SDL)**
+
 ```ts
 @ObjectType()
 class User {
@@ -10,6 +11,7 @@ class User {
   username: string;
 }
 ```
+
 Donnera en SDL:
 ```graphql
 type User {
@@ -18,30 +20,45 @@ type User {
 }
 ```
 
-# Paramètres
+## Paramètres
 `@ObjectType` a plusieurs signatures disponibles permettant de paramétrer votre objet:
 
-## `name`
+### `name`
 Indique le nom du type compilé en SDL.
+```ts
+@ObjectType("UserType")
+class User {
+  Field()
+  username: string;
+}
+```
 
-## `params`
+Donnera en SDL:
+```graphql
+type UserType {
+  username: String;
+}
+```
+
+### `params`
 Un objet acceptant plusieurs paramètres:
-| | description | type |
+| Propriété | description | type |
 |-|-|-|
-| hidden | La classe ne sera pas compilé et n'apparaîtra pas dans le schema (utile pour les type génériques), une classe abstraite est en principe `hidden` | `boolean` |
-| nullable | Tout les champs du type serons nullable | `boolean` |
-| required | Tout les champs du type seront requis | `boolean` |
-| implements | Implémente une interface (GraphQL) | `(ClassType | InterfaceType)[]`  (*Une class* ou une *interface déclarée avec `graphql-composer`*)[] |
+| hidden | La classe ne sera pas compilée et n'apparaîtra pas dans le schéma (utile pour les types génériques), une classe abstraite est en principe `hidden` | `boolean` |
+| nullable | Tous les champs du type seront nullable | `boolean` |
+| required | Tous les champs du type seront requis | `boolean` |
+| implements | Implémente une interface (GraphQL) | `(ClassType | InterfaceType)[]` (*Une class* ou *une interface déclarée avec `graphql-composer`*)[] |
 | description | La description du type | `string` |
 | extensions | Les extensions (métadonnées) du type | `any` |
 | directives | Les directives du type | `{name: string, args: KeyValue}[]` |
+| extends | Appliquer l'héritage de façon forcé | `(ClassType | ObjectType | InterfaceType | InputType)[]` (*Une class* ou *un type déclaré avec `graphql-composer`*)[] |
 
-# `@ObjectField`
-Le décorateur `@ObjectField` va indiquer les paramètre du champs seulement pour `@ObjectType`.  
+## `@ObjectField`
+Le décorateur `@ObjectField` va indiquer les paramètres du champ seulement pour `@ObjectType`.  
 
-Ceci est utile lorsque vous utiliser une class en tant que que plusieurs type GraphQL (`type`, `input` ou/et `interface`), en la décorant simultanément de `@ObjectType` et `@InputType` par exemple.  
+Ceci est utile lorsque vous utiliser une class en tant que que plusieurs types GraphQL (`type`, `input` ou/et `interface`), en la décorant simultanément de `@ObjectType` et `@InputType` par exemple.  
 
-Car `@Field` paramètre le champs pour tout les types GraphQL dont la class est décorée.
+Car `@Field` paramètre le champ pour tous les types GraphQL dont la class est décorée.
 > `@ObjectField` override les paramètres de `@Field`.
 ```ts
 @ObjectType()
@@ -62,6 +79,7 @@ class User {
   password: string;
 }
 ```
+
 Donnera en SDL:
 ```graphql
 type User {
@@ -78,7 +96,7 @@ input UserInput {
 }
 ```
 
-# Resolvable field
+## Resolvable field
 Avec GraphQL un champ d'un type peut accepter des arguments et une fonction retournant une valeur.
 Comme ce type par exemple:
 ```graphql
@@ -97,4 +115,6 @@ class User {
   }
 }
 ```
-A noter que l'[utilisation des middlewares](/fr/queries/middlewares) sur l'ensemble de la class et sur les champs est possible.
+
+## Les middlewares
+L'[utilisation des middlewares](/fr/queries/middlewares) sur l'ensemble de la class et sur les champs est possible.
