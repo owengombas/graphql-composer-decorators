@@ -5,7 +5,7 @@
       graphql-composer-decorators
     </p>
     <h3 align="center">
-      Create your GraphQL API with decorators!
+      Create your GraphQL API using decorators!
     </h3>
   </h1>
   <br/>
