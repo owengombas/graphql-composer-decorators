@@ -226,6 +226,7 @@ export class MetadataStorage {
     this.populateFields(this._interfaceFields, "interface");
     this.populateFields(this._inputFields, "input");
 
+    this.copyTypes();
     this.resolveFieldsType();
     this.applyImplementations();
     this.applyInheritance();
@@ -249,7 +250,6 @@ export class MetadataStorage {
 
     this.applyTypesModifiers();
     this.applyFieldModifiers();
-    this.copyTypes();
 
     if (!this.isEmptyType(this._queryType)) {
       this._built.push(this._queryType);
