@@ -42,8 +42,8 @@ export function PartialType(
   const t: () => FieldType | InputFieldType = () => {
     return MetadataStorage.instance.built.find((t) => {
       return (
-        t.extensions.decoratorInfos.ref === s &&
-        t.extensions.decoratorInfos.kind === kind
+        t.extensions?.decoratorInfos?.ref === s &&
+        t.extensions?.decoratorInfos?.kind === kind
       );
     }) as any;
   };
