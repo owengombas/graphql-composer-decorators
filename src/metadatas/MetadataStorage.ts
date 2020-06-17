@@ -372,7 +372,9 @@ export class MetadataStorage {
                 a.addArgs(...t.convert(Args).args);
 
                 const typeRef = a.extensions.decoratorInfos.type();
-                a.setClassType(typeRef);
+                if (!(typeRef instanceof GQLType)) {
+                  a.setClassType(typeRef);
+                }
                 a.setName((typeRef as Function).name);
               }
               f.addArgs(a);
@@ -407,14 +409,21 @@ export class MetadataStorage {
         // find the index of the argument in the method
         if (f.args.length > 1 || !f.args[0]?.classType) {
           finalArgs = Object.keys(args).reduce((prev, key) => {
-            const found = f.args.find((a) => a.name === key) as Args<
+            let value = args[key];
+            let found = f.args.find((a) => a.name === key) as Args<
               any,
               ExtensionsType
             >;
             if (!found) {
-              throw new Error(
-                `Argument: ${key} not found in the while querying field: ${f.extensions.decoratorInfos.classType.name} ${f.extensions.decoratorInfos.key}`,
-              );
+              value = { ...args };
+              found = f.args.find((a) => {
+                return a.args.find((a) => a.name === key);
+              });
+              if (!found) {
+                throw new Error(
+                  `Argument: ${key} not found in the while querying field: ${f.extensions.decoratorInfos.classType.name} ${f.extensions.decoratorInfos.key}`,
+                );
+              }
             }
             prev[found.extensions.decoratorInfos.index] = args[key];
             return prev;
