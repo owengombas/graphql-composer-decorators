@@ -1,6 +1,6 @@
 {
   "name": "graphql-composer-decorators",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Create your GraphQL API using decorators!",
   "main": "build/Main.js",
   "author": "Owen Calvin",
@@ -86,7 +86,7 @@
   },
   "dependencies": {
     "glob": "^7.1.6",
-    "graphql-composer": "^1.0.60",
+    "graphql-composer": "^1.0.61",
     "reflect-metadata": "^0.1.13"
   },
   "husky": {
