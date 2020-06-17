@@ -101,7 +101,6 @@ export class MetadataStorage {
 
   private _fieldModifiers: Modifier<FieldModifier>[] = [];
   private _typeModifiers: Modifier<TypeModifier>[] = [];
-  private _typeCopiers: Modifier<TypeModifier>[] = [];
 
   private _resolvers: Set<Function> = new Set();
 
@@ -175,10 +174,6 @@ export class MetadataStorage {
 
   addTypeModifier(item: Modifier<TypeModifier>) {
     this._typeModifiers.push(item);
-  }
-
-  addTypeCopier(item: Modifier<TypeModifier>) {
-    this._typeCopiers.push(item);
   }
 
   addResolver<T extends ClassType = any>(item: T) {
@@ -341,25 +336,6 @@ export class MetadataStorage {
     });
   }
 
-  private copyTypes() {
-    this._typeCopiers.map((tc) => {
-      const t = this._allTypes.filter((t) => {
-        return (
-          tc.classType === t.extensions.decoratorInfos.classType &&
-          tc.key === t.extensions.decoratorInfos.key
-        );
-      });
-      t.map((t) => {
-        const res = tc.modifier(t);
-        if (res) {
-          if (!res.extensions.decoratorInfos.params.hidden) {
-            this._built.push(res);
-          }
-        }
-      });
-    });
-  }
-
   private applyImplementations() {
     this._objectTypes.map((t) => {
       const interfaces = t.extensions.decoratorInfos.params.implements;
@@ -516,7 +492,9 @@ export class MetadataStorage {
     }
 
     if (typeRef instanceof GQLType) {
-      this._built.push(typeRef);
+      if (!typeRef.extensions?.decoratorInfos?.params?.hidden) {
+        this._built.push(typeRef);
+      }
     }
 
     const t = TypeParser.parse(typeRef as any);
