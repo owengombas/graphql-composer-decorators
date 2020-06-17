@@ -3,13 +3,9 @@ import {
   Field,
   ObjectType,
   Middlewares,
-  Deprecated,
-  Extensions,
   Description,
   Middleware,
   MetadataStorage,
-  PartialType,
-  RequiredType,
 } from "../../src";
 import {
   N,

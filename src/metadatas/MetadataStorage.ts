@@ -230,7 +230,6 @@ export class MetadataStorage {
     this.populateFields(this._interfaceFields, "interface");
     this.populateFields(this._inputFields, "input");
 
-    this.copyTypes();
     this.resolveFieldsType();
     this.applyImplementations();
     this.applyInheritance();
@@ -513,6 +512,10 @@ export class MetadataStorage {
     }
 
     if (typeRef instanceof EnumType) {
+      this._built.push(typeRef);
+    }
+
+    if (typeRef instanceof GQLType) {
       this._built.push(typeRef);
     }
 
