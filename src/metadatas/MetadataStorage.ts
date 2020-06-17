@@ -117,6 +117,10 @@ export class MetadataStorage {
     return this._classTypeMap;
   }
 
+  get allTypes() {
+    return this._allTypes;
+  }
+
   get store() {
     return this._store;
   }
