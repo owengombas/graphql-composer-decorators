@@ -425,7 +425,7 @@ export class MetadataStorage {
                 );
               }
             }
-            prev[found.extensions.decoratorInfos.index] = args[key];
+            prev[found.extensions.decoratorInfos.index] = value;
             return prev;
           }, []);
         }
