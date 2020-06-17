@@ -34,9 +34,9 @@ import {
 } from "..";
 
 export type TypeMap = {
-  interface?: InterfaceType<any, ExtensionsType>;
-  input?: InputType<any, ExtensionsType>;
-  object?: ObjectType<any, ExtensionsType>;
+  interface?: InterfaceType<any, ExtensionsType<ObjectTypeParams>>;
+  input?: InputType<any, ExtensionsType<ObjectTypeParams>>;
+  object?: ObjectType<any, ExtensionsType<ObjectTypeParams>>;
 };
 
 export class MetadataStorage {
@@ -106,7 +106,7 @@ export class MetadataStorage {
 
   private _args: Args<any, ExtensionsType<ObjectFieldParams>>[] = [];
 
-  private _built: GQLAnyType<any, ExtensionsType>[] = [];
+  private _built: GQLAnyType<any, ExtensionsType<ObjectTypeParams>>[] = [];
 
   get built() {
     return this._built;
