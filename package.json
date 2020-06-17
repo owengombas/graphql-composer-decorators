@@ -86,7 +86,7 @@
   },
   "dependencies": {
     "glob": "^7.1.6",
-    "graphql-composer": "^1.0.61",
+    "graphql-composer": "^1.0.62",
     "reflect-metadata": "^0.1.13"
   },
   "husky": {

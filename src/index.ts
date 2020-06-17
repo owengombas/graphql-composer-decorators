@@ -5,3 +5,4 @@ export * from "./di";
 export * from "./interfaces";
 export * from "./metadatas";
 export * from "./helpers";
+export * from "./factories";

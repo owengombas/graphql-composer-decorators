@@ -1,11 +1,1 @@
-- Hidden type
-- Inheritance (forced & native)
-- Implements
-- Argument parsing
-- Forced relation type
-- Partial
-- Required
-- Union type
-- @Extensions, @Description, @Directive
-- Implements with inheritance
-- Subscriptions
+- PartialType & RequiredType

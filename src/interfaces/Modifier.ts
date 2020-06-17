@@ -3,4 +3,5 @@ export interface Modifier<ModifierType, FieldModifierType = any> {
   fieldModifier?: FieldModifierType;
   classType: Function;
   key: string;
+  copy?: boolean;
 }

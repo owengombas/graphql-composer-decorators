@@ -101,6 +101,7 @@ export class MetadataStorage {
 
   private _fieldModifiers: Modifier<FieldModifier>[] = [];
   private _typeModifiers: Modifier<TypeModifier>[] = [];
+  private _typeCopiers: Modifier<TypeModifier>[] = [];
 
   private _resolvers: Set<Function> = new Set();
 
@@ -110,6 +111,10 @@ export class MetadataStorage {
 
   get built() {
     return this._built;
+  }
+
+  get classTypeMap() {
+    return this._classTypeMap;
   }
 
   get store() {
@@ -166,6 +171,10 @@ export class MetadataStorage {
 
   addTypeModifier(item: Modifier<TypeModifier>) {
     this._typeModifiers.push(item);
+  }
+
+  addTypeCopier(item: Modifier<TypeModifier>) {
+    this._typeCopiers.push(item);
   }
 
   addResolver<T extends ClassType = any>(item: T) {
@@ -240,6 +249,7 @@ export class MetadataStorage {
 
     this.applyTypesModifiers();
     this.applyFieldModifiers();
+    this.copyTypes();
 
     if (!this.isEmptyType(this._queryType)) {
       this._built.push(this._queryType);
@@ -325,6 +335,25 @@ export class MetadataStorage {
           tm.modifier(t);
         });
       }
+    });
+  }
+
+  private copyTypes() {
+    this._typeCopiers.map((tc) => {
+      const t = this._allTypes.filter((t) => {
+        return (
+          tc.classType === t.extensions.decoratorInfos.classType &&
+          tc.key === t.extensions.decoratorInfos.key
+        );
+      });
+      t.map((t) => {
+        const res = tc.modifier(t);
+        if (res) {
+          if (!res.extensions.decoratorInfos.params.hidden) {
+            this._built.push(res);
+          }
+        }
+      });
     });
   }
 
