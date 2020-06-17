@@ -17,5 +17,5 @@ GraphQL comes to revolutionize backend development, the fact that you have to de
 ### [Go to introduction](/graphql-composer-decorators/intro/introduction)
 
 # graphql-composer
-The `graphql-composer-decorators` module is broken down into two modules instead of making one heavier, `graphql-composer` simply provides a compositing API which allows you to create an API using the `builder' design pattern and compositing.
+The `graphql-composer-decorators` module is broken down into two modules instead of making one heavier, `graphql-composer` simply provides a compositing API which allows you to create an API using the "builder" design pattern and compositing.
 > Documentation for this module will be available soon.
