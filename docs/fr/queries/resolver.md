@@ -35,6 +35,56 @@ type Mutation {
 }
 ```
 
+## `@Arg` and `@Args`
+Vos `query`, `mutation` et `subscription` peuvent avoir des arguments, pour les déclarer il y'a deux décorateurs:
+- `@Arg`, déclare un seul argument
+- `@Args`, déclare un ensemble d'argument grâce à un `@InputType`
+
+> Les arguments sont convertis en instances de class s'ils ont une class liée.
+
+### `@Arg`
+```ts
+@Resolver()
+class Resolver {
+  @Query()
+  queryMe(@Arg("myArg") arg: string): Response {
+    // ...
+  }
+}
+```
+Donnera en SDL:
+```graphql
+type Query {
+  queryMe(arg: String): Response
+}
+```
+
+### `@Args`
+```ts
+@InputType()
+class Args {
+  @Field()
+  count: number;
+
+  @Field()
+  name: string;
+}
+
+@Resolver()
+class Resolver {
+  @Query()
+  queryMe(@Args() args: Args): Response {
+    // ...
+  }
+}
+```
+Donnera en SDL:
+```graphql
+type Query {
+  queryMe(count: Float, name: String): Response
+}
+```
+
 ## Subscriptions
 C'est un peu différent pour une subscription, celle-ci fonctionne également comme `@Query` et `@Mutation`. Les subscriptions seront ajouté au type GraphQL `Subscription`. Cependant il lui faut indique une fonction subscribe dans ses paramètres.  
 
