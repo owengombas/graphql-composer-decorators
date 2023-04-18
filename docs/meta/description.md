@@ -43,10 +43,10 @@ input UserInput {
 ## Use of description separately
 This is done via the parameters of the element decorators
 ```ts
-ObjectType({ description: "User object" })
+@ObjectType({ description: "User object" })
 @InputType("UserInput", { description: "User input" })
 class User {
-  ObjectField({ description: "User object field" })
+  @ObjectField({ description: "User object field" })
   @InputField({ description: "User input field" })
   username: string;
 }
